@@ -11,10 +11,12 @@ import Projects from "./Components/Projects.jsx";
 import Events from "./Components/Events.jsx";   // PAGE (list)
 import Admin from "./Components/Admin.jsx";
 import Footer from "./Components/Footer.jsx";
+import Admin from "./Components/Admin.jsx";
+
 
 function ProtectedRoute({ children }) {
-  const auth = localStorage.getItem("admin-auth");
-  return auth === "true" ? children : <Navigate to="/" />;
+ const auth = localStorage.getItem("admin-auth") === "true";
+return auth ? children : <Navigate to="/" replace />;
 }
 
 function App() {
