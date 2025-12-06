@@ -1,0 +1,29 @@
+{
+  "admin": {
+    "pin": "8888"
+  },
+  "events": [
+    {
+      "id": "2",
+      "name": "Marriage Event",
+      "price": 5000,
+      "image": "https://via.placeholder.com/300x200?text=Marriage+Event"
+    },
+    {
+      "id": "3",
+      "name": "Corporate Event",
+      "price": 8000,
+      "image": "https://via.placeholder.com/300x200?text=Corporate+Event"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "e5d9",
+      "eventId": "3",
+      "event": "Corporate Event",
+      "date": "2025-12-24",
+      "customerName": "s",
+      "phone": "555"
+    }
+  ]
+}

@@ -1,0 +1,548 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Times New Roman", Times, serif;
+}
+
+/* Smooth theme transition */
+body {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* DARK THEME */
+body[data-theme="dark"] {
+  background: radial-gradient(circle at top, #111 0, #000 55%);
+  color: #e6ffff;
+}
+
+body[data-theme="dark"] .navbar,
+body[data-theme="dark"] .modal-box {
+  background: rgba(20, 20, 20, 0.85);
+}
+
+body[data-theme="dark"] .nav-link,
+body[data-theme="dark"] .nav-logo {
+  color: #e6ffff;
+}
+
+/* LIGHT THEME */
+body[data-theme="light"] {
+  background: #f3f3f3;
+  color: #000;
+}
+
+body[data-theme="light"] .navbar {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+body[data-theme="light"] .nav-link,
+body[data-theme="light"] .nav-logo {
+  color: #000;
+}
+
+body[data-theme="light"] .event-card,
+body[data-theme="light"] .admin-table,
+body[data-theme="light"] .modal-box {
+  background: #ffffff;
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+/* NAVBAR */
+.navbar {
+  width: 100%;
+  height:55px;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  padding: 12px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.nav-logo {
+  font-size: 26px;
+  font-weight: bold;
+  color: #00eaff;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+  list-style: none;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: 0.3s;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #00eaff;
+}
+
+/* ICON BUTTONS */
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.2);
+  color: #00eaff;
+}
+
+/* HAMBURGER */
+.hamburger {
+  width: 30px;
+  height: 22px;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: #00eaff;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+.hamburger.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* MOBILE NAV */
+@media (max-width: 1024px) {
+  .nav-links {
+    position: fixed;
+    top: 60px;
+    left: -100%;
+    flex-direction: column;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    gap: 20px;
+    padding: 25px 0;
+    text-align: center;
+    transition: 0.4s;
+  }
+
+  .nav-links.show {
+    left: 0;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+}
+
+/* PAGE SECTION */
+.page-section {
+  padding: 120px 50px;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 32px;
+  color: #00eaff;
+  margin-bottom: 20px;
+}
+
+/* EVENTS */
+.event-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: center;
+  padding: 120px 20px;
+  min-height: 100vh;
+}
+
+.event-card {
+  width: 280px;
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  text-align: center;
+  transition: 0.3s;
+  border: 1px solid #00eaff33;
+}
+
+.event-card:hover {
+  transform: translateY(-8px);
+}
+
+.event-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.event-content {
+  padding: 15px;
+}
+
+.event-price {
+  color: #00eaff;
+  margin: 8px 0;
+}
+
+.book-btn {
+  padding: 10px 20px;
+  background: #00eaff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.book-btn:hover {
+  background: #00a7c0;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-box {
+  background: #111;
+  padding: 24px;
+  width: 90%;
+  max-width: 420px;
+  border-radius: 12px;
+  border: 1px solid #00eaff44;
+  position: relative;
+  animation: popup 0.25s ease;
+  text-align: center;
+}
+
+.confirm-btn {
+  width: 100%;
+  background: #00eaff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #ff4d4d;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  transform: scale(1.1);
+  color: #ff0000;
+}
+
+/* CALENDAR */
+.react-calendar {
+  width: 100% !important;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.booked-date {
+  background: red !important;
+  color: #fff !important;
+  border-radius: 50%;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.selected-date {
+  background: #00eaff !important;
+  color: #000 !important;
+  border-radius: 50%;
+}
+
+/* ADMIN TABLE */
+.admin-table {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background: #111;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 10px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+.admin-table th {
+  background: #00eaff;
+  color: #000;
+}
+
+.delete-btn {
+  background: red;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+/* NOTIFICATION BADGE */
+.notif-icon {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  background: red;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+/* EFFECTS */
+.fade-in {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popup {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =============================== */
+/* 🔻 EXTRA STYLES ADDED BY ELA 🔻 */
+/* (No old code changed, only new) */
+/* =============================== */
+
+/* Home page wrapper */
+.home-page {
+  min-height: 100vh;
+  padding-top: 120px;
+}
+
+/* Hero section on Home */
+.hero {
+  padding: 0 20px 40px;
+}
+.hero h1 {
+  font-size: 40px;
+  color: #00eaff;
+}
+.hero p {
+  margin-top: 8px;
+  font-size: 18px;
+}
+
+/* Gallery on Home page */
+.gallery-section {
+  padding: 20px;
+}
+.gallery-section .section-title {
+  margin-bottom: 15px;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.gallery-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #00eaff44;
+  transition: 0.3s;
+}
+.gallery-img:hover {
+  transform: scale(1.03);
+}
+
+/* Admin page layout */
+.admin-page {
+  padding: 120px 20px 40px;
+  min-height: 100vh;
+}
+
+.admin-title {
+  font-size: 32px;
+  color: #00eaff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Admin add-event form */
+.admin-form {
+  max-width: 400px;
+  margin: 0 auto 20px auto;
+}
+
+.admin-form input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: none;
+  margin-top: 8px;
+}
+
+/* Buttons for add & undo in Admin */
+.add-btn,
+.undo-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-btn {
+  background: #00eaff;
+}
+
+.undo-btn {
+  background: orange;
+}
+
+.add-btn:hover {
+  background: #00a7c0;
+}
+
+.undo-btn:hover {
+  background: #d48806;
+}
+
+/* Preview image in Admin form */
+.preview-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 1px solid #00eaff55;
+}
+
+/* Edit button with icon 🛠 */
+.edit-btn {
+  background: #007bff;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background: #0056b3;
+}
+
+/* Generic form-control (Contact, modals, admin) */
+.form-control {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: none;
+  margin-top: 8px;
+  outline: none;
+}
+/* --- FIX NAVBAR ALIGNMENT & HOVER --- */
+
+/* Make each nav item align in center vertically */
+.nav-links li {
+  display: flex;
+  align-items: center;
+}
+
+/* Make links behave like inline-flex for better centering */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Keep icon buttons same height & alignment as links */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Force hover color in both themes (in case overridden above) */
+.nav-link:hover,
+.nav-link.active {
+  color: #00eaff !important;
+}
