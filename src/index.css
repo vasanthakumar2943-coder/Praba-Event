@@ -1102,3 +1102,16 @@ button,
   .admin-title { font-size: 24px; }
   .table-img { width: 55px; height: 40px; }
 }
+
+/* PAGE SECTION */
+.page-section {
+  padding: 120px 50px;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 32px;
+  color: #00eaff;
+  margin-bottom: 20px;
+}
