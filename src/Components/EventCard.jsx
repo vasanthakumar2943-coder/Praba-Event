@@ -15,6 +15,9 @@ function EventCard({ id, name, price, image }) {
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [loading, setLoading] = useState(true);
 
+  // 🔥 ADMIN WHATSAPP NUMBER HERE
+  const adminNumber = "91XXXXXXXXXX"; // CHANGE THIS TO ADMIN NUMBER
+
   // Load booked dates from Firestore
   useEffect(() => {
     const loadBookings = async () => {
@@ -54,10 +57,19 @@ function EventCard({ id, name, price, image }) {
     setShowForm(true);
   };
 
-  // Save booking to Firestore
+  // -------------------------------
+  // SAVE BOOKING + SEND ADMIN NOTICE
+  // -------------------------------
   const handleBooking = async () => {
     if (!customer.name || !customer.phone) {
       toast.warn("Enter your details!");
+      return;
+    }
+
+    // ✅ Validate 10-digit phone
+    const cleanPhone = customer.phone.replace(/\D/g, "");
+    if (cleanPhone.length !== 10) {
+      toast.warn("Enter a valid 10-digit WhatsApp number!");
       return;
     }
 
@@ -67,17 +79,36 @@ function EventCard({ id, name, price, image }) {
         event: name,
         date: selectedDate.toISOString().split("T")[0],
         customerName: customer.name,
-        phone: customer.phone,
+        phone: cleanPhone,
+        confirmed: false,
         timestamp: Date.now(),
       });
 
-      toast.success("Booking Confirmed 🎉");
+      toast.success("Booking Sent 🎉 Admin will confirm soon.");
+
+      // ----------------------------
+      // SEND WHATSAPP NOTIFICATION TO ADMIN
+      // ----------------------------
+      const msg = `📩 New Booking Request
+
+Event: ${name}
+Date: ${selectedDate.toISOString().split("T")[0]}
+Name: ${customer.name}
+Phone: ${cleanPhone}
+
+Please open Admin Panel to confirm.`;
+
+      window.open(
+        `https://wa.me/${adminNumber}?text=${encodeURIComponent(msg)}`,
+        "_blank"
+      );
 
       // Reset states
       setShowModal(false);
       setShowForm(false);
       setCustomer({ name: "", phone: "" });
       setSelectedDate(null);
+
     } catch (error) {
       console.error("Booking error:", error);
       toast.error("Booking failed");
@@ -86,19 +117,32 @@ function EventCard({ id, name, price, image }) {
 
   return (
     <>
-      <div className="event-card">
-        <img src={image} alt={name} className="event-img" />
-        <div className="event-content">
-          <h3>{name}</h3>
-          <p className="event-price">₹ {price}</p>
-          <button className="book-btn" onClick={() => setShowModal(true)}>
-            Book Now
-          </button>
-        </div>
+      {/* EVENT CARD with animations */}
+      <div className="event-card reveal zoom-in">
+
+        {/* SHIMMER LOADING */}
+        {loading ? (
+          <div className="shimmer"></div>
+        ) : (
+          <>
+            <img src={image} alt={name} className="event-img" />
+
+            <div className="event-content">
+              <h3>{name}</h3>
+              <p className="event-price">₹ {price}</p>
+
+              {/* Glow Button */}
+              <button className="book-btn glow" onClick={() => setShowModal(true)}>
+                Book Now
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
+      {/* MODAL */}
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay fade-in">
           <div className="modal-box fade-in">
             <button
               className="close-btn"
@@ -133,13 +177,13 @@ function EventCard({ id, name, price, image }) {
                     }
                   />
                 )}
-                <button className="confirm-btn" onClick={handleContinue}>
+                <button className="confirm-btn glow" onClick={handleContinue}>
                   Continue →
                 </button>
               </>
             ) : (
               <>
-                {/* Step 2: Enter Customer Info */}
+                {/* Step 2: Customer Info */}
                 <h3>Enter Your Details</h3>
                 <input
                   type="text"
@@ -151,18 +195,36 @@ function EventCard({ id, name, price, image }) {
                   }
                   style={{ marginTop: "10px" }}
                 />
-                <input
-                  type="tel"
-                  className="form-control"
-                  placeholder="Phone Number"
-                  value={customer.phone}
-                  onChange={(e) =>
-                    setCustomer({ ...customer, phone: e.target.value })
-                  }
-                  style={{ marginTop: "10px" }}
-                />
+
+                {/* PHONE FIELD WITH WHATSAPP ICON */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    marginTop: "10px",
+                  }}
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                    width="28"
+                    height="28"
+                    alt="WhatsApp"
+                  />
+
+                  <input
+                    type="tel"
+                    className="form-control"
+                    placeholder="WhatsApp Number"
+                    value={customer.phone}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, phone: e.target.value })
+                    }
+                  />
+                </div>
+
                 <button
-                  className="confirm-btn"
+                  className="confirm-btn glow"
                   style={{ marginTop: "10px" }}
                   onClick={handleBooking}
                 >

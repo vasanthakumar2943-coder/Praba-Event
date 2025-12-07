@@ -12,9 +12,7 @@ import {
   doc,
   updateDoc,
   setDoc,
-  getDoc,
 } from "firebase/firestore";
-
 
 function Admin() {
   const [events, setEvents] = useState([]);
@@ -25,6 +23,9 @@ function Admin() {
   const [newEvent, setNewEvent] = useState({ name: "", price: "", image: "" });
   const [newImageFile, setNewImageFile] = useState(null);
 
+  // NEW: Confirm popup state
+  const [confirmData, setConfirmData] = useState(null);
+
   // Convert file to base64
   const fileToBase64 = (file, cb) => {
     const reader = new FileReader();
@@ -34,20 +35,12 @@ function Admin() {
 
   // Load Events + Bookings from Firestore
   const loadData = async () => {
-    // Load events
     const eventSnap = await getDocs(collection(db, "events"));
-    const eventList = eventSnap.docs.map((d) => ({
-      id: d.id,
-      ...d.data(),
-    }));
+    const eventList = eventSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
     setEvents(eventList);
 
-    // Load bookings
     const bookSnap = await getDocs(collection(db, "bookings"));
-    const bookList = bookSnap.docs.map((d) => ({
-      id: d.id,
-      ...d.data(),
-    }));
+    const bookList = bookSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
     setBookings(bookList);
   };
 
@@ -81,20 +74,15 @@ function Admin() {
       }
     };
 
-    if (newImageFile) {
-      fileToBase64(newImageFile, submitEvent);
-    } else {
-      submitEvent(newEvent.image);
-    }
+    if (newImageFile) fileToBase64(newImageFile, submitEvent);
+    else submitEvent(newEvent.image);
   };
 
   // -------------------------
   // DELETE EVENT (with Undo)
   // -------------------------
   const deleteEvent = async (ev) => {
-    const timeoutId = setTimeout(() => {
-      setLastDeleted(null);
-    }, 10000);
+    const timeoutId = setTimeout(() => setLastDeleted(null), 10000);
 
     setLastDeleted({ data: ev, timeoutId });
 
@@ -142,7 +130,6 @@ function Admin() {
 
   // -------------------------
   // UPDATE ADMIN PIN
-  // Firestore: collection "settings" → document "admin"
   // -------------------------
   const updatePIN = async () => {
     if (!newPin) {
@@ -208,18 +195,14 @@ function Admin() {
           className="form-control"
           placeholder="Event Name"
           value={newEvent.name}
-          onChange={(e) =>
-            setNewEvent({ ...newEvent, name: e.target.value })
-          }
+          onChange={(e) => setNewEvent({ ...newEvent, name: e.target.value })}
         />
         <input
           type="number"
           className="form-control"
           placeholder="Price ₹"
           value={newEvent.price}
-          onChange={(e) =>
-            setNewEvent({ ...newEvent, price: e.target.value })
-          }
+          onChange={(e) => setNewEvent({ ...newEvent, price: e.target.value })}
           style={{ marginTop: "8px" }}
         />
         <input
@@ -280,10 +263,7 @@ function Admin() {
                 </button>
               </td>
               <td>
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteEvent(ev)}
-                >
+                <button className="delete-btn" onClick={() => deleteEvent(ev)}>
                   🗑
                 </button>
               </td>
@@ -301,9 +281,11 @@ function Admin() {
             <th>Date</th>
             <th>Name</th>
             <th>Phone</th>
-            <th>Delete</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
+
         <tbody>
           {bookings.map((b) => (
             <tr key={b.id}>
@@ -311,7 +293,19 @@ function Admin() {
               <td>{b.date}</td>
               <td>{b.customerName}</td>
               <td>{b.phone}</td>
-              <td>
+              <td>{b.confirmed ? "Confirmed" : "Pending"}</td>
+
+              <td style={{ display: "flex", gap: "6px" }}>
+                {!b.confirmed && (
+                  <button
+                    className="confirm-btn"
+                    style={{ padding: "4px 10px", background: "#25D366" }}
+                    onClick={() => setConfirmData(b)}
+                  >
+                    ✔️
+                  </button>
+                )}
+
                 <button
                   className="delete-btn"
                   onClick={() => deleteBooking(b.id)}
@@ -349,13 +343,11 @@ function Admin() {
       {editingEvent && (
         <div className="modal-overlay">
           <div className="modal-box fade-in">
-            <button
-              className="close-btn"
-              onClick={() => setEditingEvent(null)}
-            >
+            <button className="close-btn" onClick={() => setEditingEvent(null)}>
               ✖
             </button>
             <h3>Edit Event</h3>
+
             <input
               type="text"
               className="form-control"
@@ -365,6 +357,7 @@ function Admin() {
               }
               style={{ marginTop: "10px" }}
             />
+
             <input
               type="number"
               className="form-control"
@@ -374,6 +367,7 @@ function Admin() {
               }
               style={{ marginTop: "10px" }}
             />
+
             <input
               type="file"
               accept="image/*"
@@ -388,12 +382,101 @@ function Admin() {
                 }
               }}
             />
+
             <button
               className="confirm-btn"
               style={{ marginTop: "10px" }}
               onClick={saveEventEdit}
             >
               Save ✔
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM BOOKING POPUP */}
+      {confirmData && (
+        <div className="modal-overlay">
+          <div className="modal-box fade-in">
+            <button className="close-btn" onClick={() => setConfirmData(null)}>
+              ✖
+            </button>
+
+            <h3>Confirm Booking</h3>
+
+            <p style={{ marginTop: "10px" }}>
+              <b>Event:</b> {confirmData.event}<br />
+              <b>Name:</b> {confirmData.customerName}<br />
+              <b>Date:</b> {confirmData.date}<br />
+              <b>Phone:</b> {confirmData.phone}
+            </p>
+
+            {/* CALL USER */}
+            <button
+              className="confirm-btn"
+              style={{ marginTop: "10px", background: "#007bff" }}
+              onClick={() => {
+                let phone = confirmData.phone.replace(/\D/g, "");
+                if (phone.length === 10) phone = "91" + phone;
+                window.location.href = `tel:${phone}`;
+              }}
+            >
+              📞 Call User
+            </button>
+
+            {/* SMS USER */}
+            <button
+              className="confirm-btn"
+              style={{ marginTop: "10px", background: "#ff9800" }}
+              onClick={() => {
+                let phone = confirmData.phone.replace(/\D/g, "");
+                if (phone.length === 10) phone = "91" + phone;
+
+                const smsMsg = `Your booking is confirmed for ${confirmData.event} on ${confirmData.date}.`;
+                window.location.href = `sms:${phone}?body=${encodeURIComponent(
+                  smsMsg
+                )}`;
+              }}
+            >
+              ✉️ Send SMS
+            </button>
+
+            {/* WHATSAPP CONFIRM */}
+            <button
+              className="confirm-btn"
+              style={{ marginTop: "10px", background: "#25D366" }}
+              onClick={async () => {
+                await updateDoc(doc(db, "bookings", confirmData.id), {
+                  confirmed: true,
+                });
+
+                let phone = confirmData.phone.toString().replace(/\D/g, "");
+                if (phone.length === 10) phone = "91" + phone;
+                else if (phone.length !== 12) {
+                  toast.error("Invalid phone number!");
+                  return;
+                }
+
+                const msg = `Hello ${confirmData.customerName}, your booking is confirmed! 🎉
+
+Event: ${confirmData.event}
+Date: ${confirmData.date}
+Phone: ${confirmData.phone}
+
+Thank you for choosing us!`;
+
+                window.open(
+                  `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,
+                  "_blank"
+                );
+
+                toast.success("Booking confirmed ✔");
+
+                setConfirmData(null);
+                loadData();
+              }}
+            >
+              ✔ Send WhatsApp
             </button>
           </div>
         </div>
