@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Components
 import Navbar from "./Components/Navbar.jsx";
 import Home from "./Components/Home.jsx";
 import About from "./Components/About.jsx";
@@ -11,9 +12,11 @@ import Projects from "./Components/Projects.jsx";
 import Events from "./Components/Events.jsx";  
 import Admin from "./Components/Admin.jsx";
 import Footer from "./Components/Footer.jsx";
-
-// ⭐ NEW IMPORT
 import BookingHistory from "./Components/BookingHistory.jsx";
+
+// ⭐ Optional Upgrades (Use only if added)
+// import FloatingContact from "./Components/FloatingContact.jsx";
+// import ScrollTop from "./Components/ScrollTop.jsx";
 
 function ProtectedRoute({ children }) {
   const auth = localStorage.getItem("admin-auth") === "true";
@@ -23,10 +26,10 @@ function ProtectedRoute({ children }) {
 function App() {
   return (
     <Router>
-      {/* Navbar Always Visible */}
+      {/* NAVBAR */}
       <Navbar />
 
-      {/* Toast Notification */}
+      {/* TOAST SYSTEM */}
       <ToastContainer position="top-right" autoClose={2500} theme="dark" />
 
       {/* ROUTES */}
@@ -38,11 +41,9 @@ function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<Contact />} />
-
-          {/* ⭐ NEW Booking History Route */}
           <Route path="/history" element={<BookingHistory />} />
 
-          {/* Admin Protected Route */}
+          {/* PROTECTED ADMIN PAGE */}
           <Route
             path="/admin"
             element={
@@ -54,8 +55,12 @@ function App() {
         </Routes>
       </div>
 
-      {/* ⭐ FOOTER visible on ALL pages */}
+      {/* FOOTER */}
       <Footer />
+
+      {/* ⭐ OPTIONAL — Uncomment if you added these components */}
+      {/* <FloatingContact /> */}
+      {/* <ScrollTop /> */}
     </Router>
   );
 }

@@ -1,197 +1,263 @@
-/* RESET */
+/* ============================================
+   GLOBAL RESET + FOUNDATION
+============================================ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Times New Roman", Times, serif;
+  font-family: "Times New Roman", serif;
 }
 
-/* Smooth theme transition */
 body {
   transition: background 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   THEME COLORS (PRIMARY: #00eaff)
+============================================ */
+:root {
+  --theme-color: #00eaff;
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.15);
 }
 
 /* DARK THEME */
 body[data-theme="dark"] {
-  background: radial-gradient(circle at top, #111 0, #000 55%);
+  background: radial-gradient(circle at top, #111 0%, #000 60%);
   color: #e6ffff;
 }
 
-body[data-theme="dark"] .navbar,
-body[data-theme="dark"] .modal-box {
-  background: rgba(20, 20, 20, 0.85);
-}
-
-body[data-theme="dark"] .nav-link,
-body[data-theme="dark"] .nav-logo {
-  color: #e6ffff;
+body[data-theme="dark"] .glass-nav,
+body[data-theme="dark"] .glass-box,
+body[data-theme="dark"] .glass-card {
+  background: rgba(20, 20, 20, 0.75);
 }
 
 /* LIGHT THEME */
 body[data-theme="light"] {
-  background: #585757ff;
+  background: #dcdcdc;
   color: #000;
 }
 
-body[data-theme="light"] .navbar {
-  background: rgba(255, 255, 255, 0.92);
-}
-
-body[data-theme="light"] .nav-link,
-body[data-theme="light"] .nav-logo {
+body[data-theme="light"] .glass-nav {
+  background: rgba(255, 255, 255, 0.9);
   color: #000;
 }
 
-body[data-theme="light"] .event-card,
-body[data-theme="light"] .admin-table,
-body[data-theme="light"] .modal-box {
-  background: #ffffff;
-  color: #000;
-  border: 1px solid #ccc;
+/* ============================================
+   UNIVERSAL GLASS STYLE
+============================================ */
+.glass-nav,
+.glass-box,
+.glass-card,
+.glass-footer {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
 }
 
-/* NAVBAR */
-.navbar {
+/* ============================================
+   NAVBAR (FULLY RESPONSIVE)
+============================================ */
+.glass-nav {
   width: 100%;
-  height:55px;
-  position: fixed;
-  z-index: 999;
-  top: 0;
-  left: 0;
-  padding: 12px 40px;
+  padding: 14px 22px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  animation: fadeIn 0.6s ease;
 }
 
 .nav-logo {
-  font-size: 26px;
-  font-weight: bold;
-  color: #00eaff;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--theme-color);
+  letter-spacing: 0.5px;
 }
 
 .nav-links {
   display: flex;
-  gap: 25px;
-  list-style: none;
+  gap: 18px;
+  align-items: center;
 }
 
 .nav-link {
-  color: white;
   text-decoration: none;
-  font-size: 16px;
-  transition: 0.3s;
-  background: none;
-  border: none;
-  cursor: pointer;
+  color: rgba(255,255,255,0.85);
+  font-size: 1rem;
+  transition: 0.3s ease;
 }
 
 .nav-link:hover,
 .nav-link.active {
-  color: #00eaff;
+  color: var(--theme-color);
 }
 
 /* ICON BUTTONS */
 .icon-btn {
-  background: none;
+  background: rgba(255,255,255,0.1);
   border: none;
-  font-size: 22px;
+  padding: 6px 10px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
+  font-size: 1.2rem;
+  transition: 0.3s ease;
 }
 
 .icon-btn:hover {
-  transform: scale(1.2);
-  color: #00eaff;
+  background: var(--theme-color);
+  transform: translateY(-3px);
 }
 
-/* HAMBURGER */
+/* BELL BADGE */
+.glass-badge {
+  background: rgba(255,0,0,0.85);
+  padding: 3px 7px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  color: white;
+  position: absolute;
+  top: -6px;
+  right: -10px;
+}
+
+/* ============================================
+   HAMBURGER MENU
+============================================ */
 .hamburger {
-  width: 30px;
-  height: 22px;
   display: none;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 4px;
   cursor: pointer;
 }
+
 .hamburger span {
-  display: block;
+  width: 26px;
   height: 3px;
-  width: 100%;
-  background: #00eaff;
-  border-radius: 2px;
-  transition: 0.3s;
+  background: white;
+  border-radius: 4px;
+  transition: 0.3s ease;
 }
+
 .hamburger.active span:nth-child(1) {
-  transform: translateY(9px) rotate(45deg);
+  transform: rotate(45deg) translate(5px, 6px);
 }
 .hamburger.active span:nth-child(2) {
   opacity: 0;
 }
 .hamburger.active span:nth-child(3) {
-  transform: translateY(-9px) rotate(-45deg);
+  transform: rotate(-45deg) translate(6px, -6px);
 }
 
-/* MOBILE NAV */
-@media (max-width: 1024px) {
-  .nav-links {
-    position: fixed;
-    top: 60px;
-    left: -100%;
-    flex-direction: column;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.95);
-    gap: 20px;
-    padding: 25px 0;
-    text-align: center;
-    transition: 0.4s;
-  }
-
-  .nav-links.show {
-    left: 0;
-  }
-
+/* ============================================
+   MOBILE NAV LAYOUT
+============================================ */
+@media screen and (max-width: 768px) {
   .hamburger {
     display: flex;
   }
-}
 
-/* PAGE SECTION */
+  .nav-links {
+    position: absolute;
+    top: 62px;
+    right: -250px;
+    width: 200px;
+    flex-direction: column;
+    padding: 18px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px);
+    gap: 12px;
+    transition: 0.3s ease;
+  }
+
+  .nav-links.show {
+    right: 10px;
+  }
+}
+/* ============================================
+   PAGE SECTIONS
+============================================ */
 .page-section {
-  padding: 120px 50px;
+  padding: 110px 20px;
   min-height: 100vh;
   text-align: center;
 }
 
 .section-title {
-  font-size: 32px;
-  color: #00eaff;
+  color: var(--theme-color);
+  font-size: 2rem;
   margin-bottom: 20px;
 }
 
-/* EVENTS */
+/* Smaller screens */
+@media screen and (max-width: 600px) {
+  .page-section {
+    padding: 90px 15px;
+  }
+  .section-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* ============================================
+   HOME HERO SECTION
+============================================ */
+.hero {
+  margin-top: 70px;
+  padding: 20px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 2.4rem;
+  color: var(--theme-color);
+  animation: textPop 1s ease forwards;
+}
+
+.hero p {
+  margin-top: 8px;
+  font-size: 1.1rem;
+  opacity: 0.85;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@media screen and (max-width: 600px) {
+  .hero h1 {
+    font-size: 1.9rem;
+  }
+  .hero p {
+    font-size: 1rem;
+  }
+}
+
+/* ============================================
+   EVENT CARD (GLASS EFFECT)
+============================================ */
 .event-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
-  justify-content: center;
-  padding: 120px 20px;
-  min-height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+  padding: 20px;
 }
 
 .event-card {
-  width: 280px;
-  background: #111;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 12px;
   overflow: hidden;
-  text-align: center;
-  transition: 0.3s;
-  border: 1px solid #00eaff33;
+  backdrop-filter: blur(12px);
+  transition: 0.35s ease;
+  animation: fadeIn 0.8s ease forwards;
 }
 
 .event-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.4);
 }
 
 .event-img {
@@ -201,487 +267,145 @@ body[data-theme="light"] .modal-box {
 }
 
 .event-content {
-  padding: 15px;
+  padding: 15px 15px 20px;
+  text-align: center;
 }
 
 .event-price {
-  color: #00eaff;
+  color: var(--theme-color);
   margin: 8px 0;
+  font-size: 1.1rem;
 }
 
 .book-btn {
-  padding: 10px 20px;
-  background: #00eaff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
   width: 100%;
+  padding: 10px 16px;
+  background: var(--theme-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #000;
+  font-weight: bold;
+  transition: 0.3s ease;
 }
 
 .book-btn:hover {
-  background: #00a7c0;
+  background: #00bcd4;
+  transform: translateY(-3px);
 }
 
-/* MODAL */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+/* ============================================
+   FLIPKART STYLE SLIDER
+============================================ */
+.flip-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.flip-slider-container {
+  width: 100%;
+  overflow: hidden;
+  padding: 15px 0;
+}
+
+.flip-slider-track {
   display: flex;
+  gap: 18px;
+  transition: transform 0.8s ease;
+}
+
+.flip-card {
+  min-width: 260px;
+  height: 160px;
+  background: #000;
+  border-radius: 12px;
+  cursor: pointer;
+  perspective: 1000px;
+  position: relative;
+}
+
+.flip-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s ease;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-front,
+.flip-back {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.flip-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.flip-back {
+  background: linear-gradient(135deg, #00141a, #003344);
+  color: white;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(8px);
-  z-index: 1000;
-  animation: fadeIn 0.3s ease;
 }
 
-.modal-box {
-  background: #111;
-  padding: 24px;
-  width: 90%;
-  max-width: 420px;
-  border-radius: 12px;
-  border: 1px solid #00eaff44;
-  position: relative;
-  animation: popup 0.25s ease;
-  text-align: center;
-}
-
-.confirm-btn {
-  width: 100%;
-  background: #00eaff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px;
-  margin-top: 12px;
-  cursor: pointer;
-}
-
-.close-btn {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #ff4d4d;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.close-btn:hover {
-  transform: scale(1.1);
-  color: #ff0000;
-}
-
-/* CALENDAR */
-.react-calendar {
-  width: 100% !important;
-  border-radius: 10px;
-  margin-top: 10px;
-}
-
-.booked-date {
-  background: red !important;
-  color: #fff !important;
-  border-radius: 50%;
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.selected-date {
-  background: #00eaff !important;
-  color: #000 !important;
-  border-radius: 50%;
-}
-
-/* ADMIN TABLE */
-.admin-table {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  border-collapse: collapse;
-  background: #111;
-}
-
-.admin-table th,
-.admin-table td {
-  padding: 10px;
-  border: 1px solid #333;
-  text-align: center;
-}
-
-.admin-table th {
-  background: #00eaff;
-  color: #000;
-}
-
-.delete-btn {
-  background: red;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-/* NOTIFICATION BADGE */
-.notif-icon {
-  position: relative;
-}
-
-.badge {
-  position: absolute;
-  top: -8px;
-  right: -12px;
-  background: red;
-  color: #fff;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 50%;
-  animation: pulse 1.5s infinite;
-}
-
-/* EFFECTS */
-.fade-in {
-  animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes popup {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* =============================== */
-/* 🔻 EXTRA STYLES ADDED BY ELA 🔻 */
-/* (No old code changed, only new) */
-/* =============================== */
-
-/* Home page wrapper */
-.home-page {
-  min-height: 100vh;
-  padding-top: 120px;
-}
-
-/* Hero section on Home */
-.hero {
-  padding: 0 20px 40px;
-}
-.hero h1 {
-  font-size: 40px;
-  color: #00eaff;
-}
-.hero p {
-  margin-top: 8px;
-  font-size: 18px;
-}
-
-/* Gallery on Home page */
+/* ============================================
+   GALLERY (MASONRY)
+============================================ */
 .gallery-section {
   padding: 20px;
+  margin-top: 30px;
 }
-.gallery-section .section-title {
-  margin-bottom: 15px;
-}
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
-}
-.gallery-img {
+
+.gallery-masonry {
+  columns: 2;
+  column-gap: 12px;
   width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 2px solid #00eaff44;
-  transition: 0.3s;
 }
-.gallery-img:hover {
+
+.masonry-img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  transition: 0.3s ease;
+}
+
+.masonry-img:hover {
   transform: scale(1.03);
 }
 
-/* Admin page layout */
-.admin-page {
-  padding: 120px 20px 40px;
-  min-height: 100vh;
-}
-
-.admin-title {
-  font-size: 32px;
-  color: #00eaff;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-/* Admin add-event form */
-.admin-form {
-  max-width: 400px;
-  margin: 0 auto 20px auto;
-}
-
-.admin-form input {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: none;
-  margin-top: 8px;
-}
-
-/* Buttons for add & undo in Admin */
-.add-btn,
-.undo-btn {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.add-btn {
-  background: #00eaff;
-}
-
-.undo-btn {
-  background: orange;
-}
-
-.add-btn:hover {
-  background: #00a7c0;
-}
-
-.undo-btn:hover {
-  background: #d48806;
-}
-
-/* Preview image in Admin form */
-.preview-img {
-  width: 100%;
-  height: 160px;
+.masonry-img.tall {
+  height: 300px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-top: 10px;
-  border: 1px solid #00eaff55;
 }
 
-/* Edit button with icon 🛠 */
-.edit-btn {
-  background: #007bff;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
+.masonry-img.wide {
+  height: 170px;
+  object-fit: cover;
 }
 
-.edit-btn:hover {
-  background: #0056b3;
+/* Fully responsive masonry */
+@media screen and (max-width: 600px) {
+  .gallery-masonry {
+    columns: 1;
+  }
 }
 
-/* Generic form-control (Contact, modals, admin) */
-.form-control {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: none;
-  margin-top: 8px;
-  outline: none;
-}
-/* --- FIX NAVBAR ALIGNMENT & HOVER --- */
-
-/* Make each nav item align in center vertically */
-.nav-links li {
-  display: flex;
-  align-items: center;
-}
-
-/* Make links behave like inline-flex for better centering */
-.nav-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-/* Keep icon buttons same height & alignment as links */
-.icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Force hover color in both themes (in case overridden above) */
-.nav-link:hover,
-.nav-link.active {
-  color: #00eaff !important;
-}
-/* =====================================================
-      CLEAN & FIXED MASTER ANIMATION PACK (ELA OPTIMIZED)
-===================================================== */
-
-/* ---------- Fade In ---------- */
-.fade-in {
-  opacity: 0;
-  animation: fadeIn 0.7s ease-out forwards;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ---------- Slide Up ---------- */
-.slide-up {
-  opacity: 0;
-  animation: slideUp 0.8s ease-out forwards;
-}
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ---------- Zoom In ---------- */
-.zoom-in {
-  opacity: 0;
-  animation: zoomIn 0.5s ease-out forwards;
-}
-@keyframes zoomIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-/* ---------- Text Pop for Hero ---------- */
-.text-pop {
-  opacity: 0;
-  animation: textPop 1s ease-out forwards;
-}
-@keyframes textPop {
-  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ---------- Navbar drop animation ---------- */
-.nav-links.show {
-  animation: menuDrop 0.4s ease forwards;
-}
-@keyframes menuDrop {
-  from { opacity: 0; transform: translateY(-12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* =====================================================
-      SCROLL REVEAL (OBSERVES ELEMENTS)
-===================================================== */
-.scroll-animate {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: 0.8s ease;
-}
-.scroll-animate.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* =====================================================
-      SHIMMER LOADING
-===================================================== */
-.shimmer {
-  background: linear-gradient(90deg, #222 25%, #444 50%, #222 75%);
-  background-size: 200% 100%;
-  animation: shimmerMove 1.5s infinite;
-  border-radius: 10px;
-}
-@keyframes shimmerMove {
-  0% { background-position: 180% 0; }
-  100% { background-position: -180% 0; }
-}
-
-/* =====================================================
-      BUTTON GLOW HOVER
-===================================================== */
-.glow-btn,
-.glow {
-  transition: 0.25s;
-  box-shadow: 0 0 0px transparent;
-}
-.glow-btn:hover,
-.glow:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-}
-
-/* =====================================================
-      PARALLAX HERO
-===================================================== */
-.parallax-hero {
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  padding: 140px 20px;
-  text-align: center;
-  color: white;
-  position: relative;
-}
-.parallax-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-}
-
-/* =====================================================
-      CONFETTI FLOAT EFFECT (SUBTLE)
-===================================================== */
-.confetti {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: var(--confetti-color);
-  border-radius: 2px;
-  animation: floatUp 3.2s linear infinite;
-  opacity: 0;
-}
-@keyframes floatUp {
-  0%   { transform: translateY(10px) rotate(0); opacity: 0; }
-  20%  { opacity: 1; }
-  100% { transform: translateY(-60px) rotate(360deg); opacity: 0; }
-}
-.slider-section {
-  width: 100%;
-  margin-top: 20px;
-  text-align: center;
-}
-
+/* ============================================
+   GENERIC IMAGE SLIDER
+============================================ */
 .event-slider {
   display: flex;
   overflow-x: hidden;
@@ -695,7 +419,6 @@ body[data-theme="light"] .modal-box {
   height: 150px;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .slide-img {
@@ -703,167 +426,725 @@ body[data-theme="light"] .modal-box {
   height: 100%;
   object-fit: cover;
 }
-.flip-section {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.flip-slider-container {
-  width: 100%;
-  overflow: hidden;
-  margin-top: 15px;
-}
-
-.flip-slider-track {
+/* ============================================
+   MODAL OVERLAY + GLASS MODAL
+============================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
   display: flex;
-  gap: 20px;
-  transition: transform 1s ease;
-}
-
-.flip-card {
-  width: 250px;
-  height: 170px;
-  perspective: 1000px;
-}
-
-.flip-inner {
-  width: 100%;
-  height: 100%;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
-}
-
-.flip-card:hover .flip-inner {
-  transform: rotateY(180deg);
-}
-
-.flip-front,
-.flip-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  backface-visibility: hidden;
-  overflow: hidden;
-}
-
-.flip-front img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.flip-back {
-  background: linear-gradient(135deg, #ff3d7f, #6b00ff);
-  color: white;
-  transform: rotateY(180deg);
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-.gallery-masonry {
-  columns: 2;
-  column-gap: 12px;
-  padding: 10px;
+  z-index: 3000;
+  animation: fadeIn 0.3s ease;
 }
 
-.masonry-img {
+.glass-box {
+  width: 90%;
+  max-width: 420px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border-radius: 14px;
+  padding: 24px;
+  border: 1px solid var(--glass-border);
+  animation: popup 0.35s ease;
+  position: relative;
+  text-align: center;
+}
+
+/* CLOSE BUTTON */
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 20px;
+  background: none;
+  border: none;
+  color: #ff6969;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.close-btn:hover {
+  color: red;
+  transform: scale(1.15);
+}
+
+/* ============================================
+   FORM INPUTS + LAYOUT
+============================================ */
+.form-control,
+.form-input,
+.admin-input {
   width: 100%;
-  margin-bottom: 12px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  margin-top: 12px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.form-control:focus,
+.form-input:focus {
+  border-color: var(--theme-color);
+}
+
+/* PHONE FIELD (WhatsApp icon + input) */
+.phone-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* ============================================
+   CONFIRM & ACTION BUTTONS
+============================================ */
+.confirm-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--theme-color);
+  border: none;
+  color: black;
+  border-radius: 10px;
+  margin-top: 15px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+.confirm-btn:hover {
+  background: #00bcd4;
+  transform: translateY(-3px);
+}
+
+.delete-btn {
+  background: #d93636;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  background: #ff4242;
+}
+
+/* WhatsApp Confirm */
+.icon-btn.confirm {
+  background: #25D366;
+  color: white;
+}
+
+/* ============================================
+   CALENDAR (GLASS STYLE)
+============================================ */
+.calendar-glass-wrapper {
+  padding: 15px;
+  border-radius: 15px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  margin: 15px auto;
+}
+
+.react-calendar {
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  color: white;
+}
+
+/* Selected date */
+.selected-date {
+  background: var(--theme-color) !important;
+  color: black !important;
+  border-radius: 6px;
+}
+
+/* Booked dates */
+.booked-date {
+  background: rgba(255,0,0,0.6) !important;
+  text-decoration: line-through;
+  color: white !important;
+  pointer-events: none;
+  border-radius: 6px;
+}
+
+/* ============================================
+   ANIMATION PACK (MERGED + CLEAN)
+============================================ */
+
+/* Fade In */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Slide Up */
+.slide-up {
+  opacity: 0;
+  animation: slideUp 0.7s ease forwards;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Zoom In */
+.zoom-in {
+  opacity: 0;
+  animation: zoomIn 0.5s ease forwards;
+}
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Text Pop for Hero */
+.text-pop {
+  opacity: 0;
+  animation: textPop 1s ease forwards;
+}
+@keyframes textPop {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Popup modal */
+@keyframes popup {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Pulse Badge */
+@keyframes pulse {
+  0%   { transform: scale(1); opacity: 1; }
+  50%  { transform: scale(1.15); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Scroll reveal */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.7s ease;
+}
+.scroll-animate.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ============================================
+   SHIMMER PLACEHOLDER 
+============================================ */
+.shimmer {
+  background: linear-gradient(90deg, #222 25%, #444 50%, #222 75%);
+  background-size: 200% 100%;
+  animation: shimmerMove 1.5s infinite;
   border-radius: 10px;
 }
-
-.masonry-img.tall {
-  height: 300px;
-  object-fit: cover;
+@keyframes shimmerMove {
+  0% { background-position: 180% 0; }
+  100% { background-position: -180% 0; }
 }
-
-.masonry-img.wide {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-/* -------------------- FOOTER -------------------- */
-
-.footer {
-  background: #111;
-  color: white;
-  padding: 40px 20px 20px;
-  margin-top: 40px;
-}
-
-.footer-container {
-  max-width: 1100px;
+/* =====================================================
+   ADMIN PAGE WRAPPER
+===================================================== */
+.admin-wrapper {
+  padding: 120px 20px 40px;
+  max-width: 1200px;
   margin: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
 }
 
-.footer-section h3 {
-  margin-bottom: 10px;
-  font-size: 18px;
-  color: #ffd93d;
+/* Title */
+.admin-title {
+  font-size: 32px;
+  color: var(--theme-color);
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: bold;
+}
+
+/* =====================================================
+   ADD EVENT FORM (GLASS CARD)
+===================================================== */
+.glass-card {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.14);
+  padding: 22px;
+  border-radius: 14px;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 450px;
+  animation: fadeIn 0.5s ease;
+}
+
+.glass-card input {
+  margin-top: 8px;
+}
+
+.preview-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+/* ADD EVENT BUTTON */
+.add-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 10px;
+  background: var(--theme-color);
+  color: black;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.add-btn:hover {
+  background: #00bdd8;
+  transform: translateY(-3px);
+}
+
+/* =====================================================
+   FLOATING UNDO BUTTON
+===================================================== */
+.undo-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: #ff9800;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  z-index: 4000;
+  font-weight: bold;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+  transition: 0.3s;
+}
+
+.undo-btn:hover {
+  background: #e48800;
+  transform: translateY(-3px);
+}
+
+/* MOBILE SMALLER */
+@media (max-width: 480px) {
+  .undo-btn {
+    padding: 10px 14px;
+    bottom: 15px;
+    right: 12px;
+  }
+}
+
+/* =====================================================
+   ADMIN TABLE WRAPPER (RESPONSIVE)
+===================================================== */
+.admin-table-wrap,
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  padding-bottom: 10px;
+}
+
+/* Table */
+.admin-table {
+  width: 100%;
+  min-width: 750px;
+  border-collapse: collapse;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Headers */
+.admin-table th {
+  background: var(--theme-color);
+  color: black;
+  padding: 12px;
+  font-size: 15px;
+  text-align: center;
+}
+
+/* Cells */
+.admin-table td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+/* Table images */
+.table-img {
+  width: 70px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* =====================================================
+   ACTION BUTTONS ON TABLE
+===================================================== */
+.icon-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+/* Edit */
+.icon-btn.edit {
+  background: #007bff;
+  color: white;
+}
+.icon-btn.edit:hover {
+  background: #005ec4;
+}
+
+/* Confirm */
+.icon-btn.confirm {
+  background: #25D366;
+  color: white;
+}
+.icon-btn.confirm:hover {
+  background: #1eb255;
+}
+
+/* Delete */
+.delete-btn {
+  background: #d93636;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.delete-btn:hover {
+  background: #ff4242;
+}
+
+/* =====================================================
+   CONFIRM POPUP MODAL (Admin → Confirm Booking)
+===================================================== */
+.confirm-popup {
+  width: 90%;
+  max-width: 420px;
+  padding: 22px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  animation: popup 0.35s ease;
+}
+
+.confirm-popup h3 {
+  color: var(--theme-color);
+}
+
+/* =====================================================
+   SECURITY SETTINGS (PIN UPDATE)
+===================================================== */
+.security-box {
+  max-width: 350px;
+  margin: auto;
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* =====================================================
+   BOOKING HISTORY UI (User Side)
+===================================================== */
+.no-events-text {
+  font-size: 1.1rem;
+  opacity: 0.85;
+}
+
+.history-img {
+  width: 60px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.status-confirmed {
+  color: #37ff90;
+  font-weight: bold;
+}
+
+.status-pending {
+  color: #ffcc55;
+  font-weight: bold;
+}
+
+.status-expired {
+  color: #bbbbbb;
+  font-weight: bold;
+}
+
+/* =====================================================
+   MOBILE OPTIMIZATION — VERY IMPORTANT
+===================================================== */
+
+@media (max-width: 768px) {
+  .admin-title { font-size: 26px; }
+  .admin-table td,
+  .admin-table th {
+    font-size: 0.82rem;
+    padding: 8px;
+  }
+  .icon-btn {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+  .delete-btn {
+    padding: 5px 8px;
+  }
+}
+
+/* VERY SMALL DEVICES */
+@media (max-width: 480px) {
+  .admin-title { font-size: 22px; }
+
+  .confirm-popup {
+    padding: 18px;
+  }
+
+  .table-img {
+    width: 55px;
+    height: 40px;
+  }
+}
+/* ============================================
+   SERVICES / PROJECTS / ABOUT / CONTACT PAGES
+============================================ */
+
+/* Section containers already defined; add page-specific spacing */
+.services-section,
+.projects-section,
+.about-section,
+.contact-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 18px;
+}
+
+/* Services grid (cards already defined) adjustments */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+/* Service card (tweak for mobile) */
+.service-card {
+  padding: 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* Projects grid (cards already defined) adjustments */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+/* Project card hover glow subtle */
+.project-card:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+/* ABOUT page small tweaks */
+.about-hero { padding-top: 40px; text-align: center; }
+.about-subtitle { opacity: 0.85; margin-top: 8px; font-size: 1.05rem; }
+
+/* CONTACT page */
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+/* Contact form */
+.contact-form { margin-top: 12px; padding: 6px; }
+
+/* Map responsive */
+.map-container { height: 320px; border-radius: 12px; overflow: hidden; }
+
+/* ============================================
+   FOOTER + BOTTOM FIXES
+============================================ */
+
+/* Use glass-footer class from earlier */
+.footer {
+  margin-top: 40px;
+  padding: 30px 18px;
+  background: var(--glass-bg);
+  border-top: 1px solid var(--glass-border);
+}
+
+.footer-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
 }
 
 .footer-logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ffd93d;
+  font-weight: 700;
+  color: var(--theme-color);
+  font-size: 1.4rem;
 }
 
-.footer-section p,
-.footer-section li,
-.footer-section a {
-  font-size: 14px;
-  color: #ccc;
+.footer-links a {
+  color: rgba(255,255,255,0.9);
 }
 
-.footer-section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.footer-section ul li {
-  margin-bottom: 6px;
-}
-
-.footer-section ul li a {
-  text-decoration: none;
-  color: #ccc;
-  transition: 0.3s;
-}
-
-.footer-section ul li a:hover {
-  color: #fff;
-}
-
-/* SOCIAL ICONS */
-.footer-social {
-  margin-top: 10px;
-  display: flex;
-  gap: 15px;
-}
-
-.footer-social i {
-  font-size: 22px;
-  color: #ffd93d;
-  transition: 0.3s;
-}
-
-.footer-social i:hover {
-  color: white;
-  transform: scale(1.2);
-}
-
-/* BOTTOM COPYRIGHT */
+/* Footer bottom */
 .footer-bottom {
+  margin-top: 18px;
   text-align: center;
-  margin-top: 20px;
-  border-top: 1px solid #333;
-  padding-top: 10px;
-  font-size: 13px;
-  color: #888;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 12px;
 }
 
+/* ============================================
+   FLOATING CONTACT (WhatsApp + Call)
+============================================ */
+.floating-contact {
+  position: fixed;
+  right: 16px;
+  bottom: 92px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 2500;
+}
+
+.float-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  color: white;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--theme-color);
+}
+
+.float-btn.whats { background: #25D366; }
+.float-btn.call  { background: var(--theme-color); }
+
+.float-btn:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(0,0,0,0.32); }
+
+/* On very small screens reduce size */
+@media (max-width: 420px) {
+  .floating-contact { right: 10px; bottom: 80px; }
+  .float-btn { width: 46px; height: 46px; font-size: 20px; }
+}
+
+/* ============================================
+   SCROLL-TO-TOP BUTTON (glass)
+============================================ */
+.scroll-top {
+  position: fixed;
+  right: 16px;
+  bottom: 20px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  z-index: 2500;
+  font-size: 18px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.scroll-top:hover { transform: translateY(-6px); background: var(--theme-color); }
+
+/* Hide by default; toggle with JS by adding .show */
+.scroll-top { display: none; }
+.scroll-top.show { display: block; }
+
+/* ============================================
+   MISC: SMALL UTILITIES
+============================================ */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-muted { color: rgba(255,255,255,0.7); font-size: 0.95rem; }
+
+/* Small divider */
+.sep {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 14px 0;
+  border-radius: 2px;
+}
+
+/* ============================================
+   FINAL RESPONSIVENESS / TYPOGRAPHY TWEAKS
+============================================ */
+
+html { font-size: 16px; }
+
+@media (max-width: 1200px) { html { font-size: 15px; } }
+@media (max-width: 992px)  { html { font-size: 15px; } }
+@media (max-width: 768px)  { html { font-size: 14px; } }
+@media (max-width: 480px)  { html { font-size: 13px; } }
+
+/* Ensure images scale */
+img { max-width: 100%; height: auto; display: block; }
+
+/* final safety: avoid horizontal scroll from long content */
+body, #root { overflow-x: hidden !important; }
+
+/* ============================================
+   END OF STYLES - YOUR CLEAN, OPTIMIZED CSS
+============================================ */

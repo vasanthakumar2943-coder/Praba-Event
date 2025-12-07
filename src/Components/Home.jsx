@@ -10,7 +10,7 @@ function Home() {
   const [sliderImages, setSliderImages] = useState([]);
   const sliderRef = useRef(null);
 
-  // Confetti effect
+  // Confetti effect (same)
   useEffect(() => {
     const randomColor = () => {
       const colors = ["#ff3d7f", "#00e1ff", "#ffd93d", "#69ff6b"];
@@ -26,7 +26,7 @@ function Home() {
     }
   }, []);
 
-  // Load slider images from Firestore
+  // Load slider images
   useEffect(() => {
     const loadImages = async () => {
       try {
@@ -40,14 +40,16 @@ function Home() {
     loadImages();
   }, []);
 
-  // Auto-slide flip cards
+  // Auto-slide Flipkart-style
   useEffect(() => {
     if (sliderImages.length === 0) return;
 
     let index = 0;
     const interval = setInterval(() => {
       index = (index + 1) % sliderImages.length;
-      sliderRef.current.style.transform = `translateX(-${index * 280}px)`;
+
+      // Flipkart-style smooth sliding
+      sliderRef.current.style.transform = `translateX(-${index * 340}px)`;
     }, 3000);
 
     return () => clearInterval(interval);
@@ -56,7 +58,7 @@ function Home() {
   return (
     <div>
 
-      {/* ⭐ 1. WELCOME NOTE */}
+      {/* ⭐ 1. HERO SECTION */}
       <section className="hero reveal" style={{ paddingTop: "20px" }}>
         <h1 className="text-pop">Welcome to Praba Event's</h1>
         <p className="text-pop" style={{ animationDelay: "0.3s" }}>
@@ -64,8 +66,8 @@ function Home() {
         </p>
       </section>
 
-      {/* ⭐ 2. FLIP-CARD STYLE SLIDER */}
-      <section className="flip-section fade-in">
+      {/* ⭐ 2. FLIPKART STYLE SLIDER */}
+      <section className="flip-section reveal">
         <h2 className="section-title">Event Highlights</h2>
 
         <div className="flip-slider-container">
@@ -89,7 +91,7 @@ function Home() {
 
       {/* ⭐ 3. USER DASHBOARD */}
       <section
-        className="page-section fade-in"
+        className="page-section reveal"
         style={{ paddingTop: "30px", textAlign: "center" }}
       >
         <h2 className="section-title">User Dashboard</h2>
@@ -103,7 +105,7 @@ function Home() {
         </button>
       </section>
 
-      {/* ⭐ 4. UPDATED GALLERY LAYOUT */}
+      {/* ⭐ 4. GALLERY */}
       <section className="gallery-section reveal">
         <h2 className="section-title">Our Event Gallery</h2>
 
@@ -114,6 +116,7 @@ function Home() {
           <img src="/assets/g1.jpg" className="masonry-img" />
         </div>
       </section>
+
     </div>
   );
 }

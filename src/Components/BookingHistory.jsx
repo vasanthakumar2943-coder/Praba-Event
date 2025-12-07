@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import "../index.css";
+import useReveal from "../hooks/useReveal";
 
 function BookingHistory() {
+  useReveal(); // animation only, no logic change
+
   const [phone, setPhone] = useState("");
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -24,7 +27,6 @@ function BookingHistory() {
         .map((d) => ({ id: d.id, ...d.data() }))
         .filter((b) => b.phone === cleanPhone);
 
-      // Separate Upcoming vs Past
       const today = new Date().toISOString().split("T")[0];
 
       const upcoming = list.filter((b) => b.date >= today);
@@ -40,14 +42,13 @@ function BookingHistory() {
     setLoading(false);
   };
 
-  // DELETE BOOKING
   const cancelBooking = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this booking?")) return;
 
     try {
       await deleteDoc(doc(db, "bookings", id));
       alert("Booking canceled");
-      fetchHistory(); // refresh
+      fetchHistory();
     } catch (e) {
       console.error(e);
       alert("Failed to cancel booking");
@@ -55,7 +56,7 @@ function BookingHistory() {
   };
 
   return (
-    <div className="page-section fade-in" style={{ textAlign: "center" }}>
+    <div className="page-section reveal" style={{ textAlign: "center" }}>
       <h2 className="section-title">Your Booking History</h2>
 
       {/* PHONE INPUT */}
@@ -78,104 +79,109 @@ function BookingHistory() {
 
       {loading && <p>Loading...</p>}
 
-      {/* RESULTS */}
-      {showResults && bookings.upcoming?.length === 0 &&
+      {/* No Results */}
+      {showResults &&
+        bookings.upcoming?.length === 0 &&
         bookings.past?.length === 0 && (
-          <p>No bookings found for this number.</p>
+          <p className="no-events-text fade-in">No bookings found for this number.</p>
         )}
 
       {/* UPCOMING BOOKINGS */}
       {bookings.upcoming?.length > 0 && (
         <>
-          <h3 className="section-title">Upcoming Bookings</h3>
-          <table className="admin-table fade-in">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Event</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Cancel</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings.upcoming.map((b) => (
-                <tr key={b.id}>
-                  <td>
-                    <img
-                      src={b.image || "/placeholder.jpg"}
-                      alt={b.event}
-                      width="60"
-                      height="40"
-                      style={{ borderRadius: "6px" }}
-                    />
-                  </td>
-                  <td>{b.event}</td>
-                  <td>{b.date}</td>
-                  <td>
-                    {b.confirmed ? (
-                      <span style={{ color: "green" }}>Confirmed ✔</span>
-                    ) : (
-                      <span style={{ color: "orange" }}>Pending ⏳</span>
-                    )}
-                  </td>
-                  <td>
-                    {!b.confirmed && (
-                      <button
-                        className="delete-btn"
-                        onClick={() => cancelBooking(b.id)}
-                      >
-                        Cancel ✖
-                      </button>
-                    )}
-                  </td>
+          <h3 className="section-title highlight-title">Upcoming Bookings</h3>
+          <div className="table-wrapper reveal">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Event</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Cancel</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {bookings.upcoming.map((b) => (
+                  <tr key={b.id}>
+                    <td>
+                      <img
+                        src={b.image || "/placeholder.jpg"}
+                        alt={b.event}
+                        width="60"
+                        height="40"
+                        className="history-img"
+                      />
+                    </td>
+                    <td>{b.event}</td>
+                    <td>{b.date}</td>
+                    <td>
+                      {b.confirmed ? (
+                        <span className="status-confirmed">Confirmed ✔</span>
+                      ) : (
+                        <span className="status-pending">Pending ⏳</span>
+                      )}
+                    </td>
+                    <td>
+                      {!b.confirmed && (
+                        <button
+                          className="delete-btn"
+                          onClick={() => cancelBooking(b.id)}
+                        >
+                          Cancel ✖
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
 
       {/* PAST BOOKINGS */}
       {bookings.past?.length > 0 && (
         <>
-          <h3 className="section-title" style={{ marginTop: "30px" }}>
+          <h3 className="section-title highlight-title" style={{ marginTop: "30px" }}>
             Past Bookings
           </h3>
-          <table className="admin-table fade-in">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Event</th>
-                <th>Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings.past.map((b) => (
-                <tr key={b.id}>
-                  <td>
-                    <img
-                      src={b.image || "/placeholder.jpg"}
-                      alt={b.event}
-                      width="60"
-                      height="40"
-                      style={{ borderRadius: "6px" }}
-                    />
-                  </td>
-                  <td>{b.event}</td>
-                  <td>{b.date}</td>
-                  <td>
-                    {b.confirmed ? (
-                      <span style={{ color: "green" }}>Completed ✔</span>
-                    ) : (
-                      <span style={{ color: "gray" }}>Expired</span>
-                    )}
-                  </td>
+          <div className="table-wrapper reveal">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Event</th>
+                  <th>Date</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {bookings.past.map((b) => (
+                  <tr key={b.id}>
+                    <td>
+                      <img
+                        src={b.image || "/placeholder.jpg"}
+                        alt={b.event}
+                        width="60"
+                        height="40"
+                        className="history-img"
+                      />
+                    </td>
+                    <td>{b.event}</td>
+                    <td>{b.date}</td>
+                    <td>
+                      {b.confirmed ? (
+                        <span className="status-confirmed">Completed ✔</span>
+                      ) : (
+                        <span className="status-expired">Expired</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

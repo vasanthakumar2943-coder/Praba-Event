@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../index.css";
 
-// Firebase
 import { db } from "../firebase";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 
@@ -18,25 +17,25 @@ function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Theme handling
+  // Theme
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Check login
+  // Login check
   useEffect(() => {
     const auth = localStorage.getItem("admin-auth");
     setLoggedIn(auth === "true");
   }, []);
 
-  // 🔥 Fetch booking count from Firestore
+  // Booking count
   useEffect(() => {
     const loadBookings = async () => {
       try {
         const snap = await getDocs(collection(db, "bookings"));
         setBookingCount(snap.size);
-      } catch (err) {}
+      } catch {}
     };
 
     loadBookings();
@@ -44,11 +43,9 @@ function Navbar() {
     return () => clearInterval(id);
   }, [location.pathname]);
 
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
-  // 🔥 Admin Login using Firestore
+  // Admin login
   const handleAdminLogin = async () => {
     try {
       const ref = doc(db, "settings", "admin");
@@ -63,13 +60,9 @@ function Navbar() {
           toast.success("Welcome Admin 🔐");
           setShowLoginModal(false);
           navigate("/admin");
-        } else {
-          toast.error("Incorrect PIN ❌");
-        }
-      } else {
-        toast.error("Admin PIN not found ⚠️");
-      }
-    } catch (error) {
+        } else toast.error("Incorrect PIN ❌");
+      } else toast.error("Admin PIN not found ⚠️");
+    } catch {
       toast.error("Login failed ❌");
     }
   };
@@ -92,9 +85,10 @@ function Navbar() {
 
   return (
     <>
-      <nav className="navbar">
+      <nav className="navbar glass-nav reveal">
         <div className="nav-logo">Praba Event's</div>
 
+        {/* HAMBURGER */}
         <div
           className={`hamburger ${menuOpen ? "active" : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -104,6 +98,7 @@ function Navbar() {
           <span></span>
         </div>
 
+        {/* MENU */}
         <ul className={`nav-links ${menuOpen ? "show" : ""}`}>
           {menuItems.map((item) => (
             <li key={item.link}>
@@ -119,7 +114,7 @@ function Navbar() {
             </li>
           ))}
 
-          {/* Admin Dashboard bell */}
+          {/* ADMIN DASHBOARD 🔔 */}
           {loggedIn && (
             <li>
               <Link
@@ -127,25 +122,25 @@ function Navbar() {
                 className="nav-link notif-icon"
                 onClick={() => setMenuOpen(false)}
               >
-                🔔
+                <span className="icon-bell">🔔</span>
                 {bookingCount > 0 && (
-                  <span className="badge">{bookingCount}</span>
+                  <span className="badge glass-badge">{bookingCount}</span>
                 )}
               </Link>
             </li>
           )}
 
-          {/* Theme toggle */}
+          {/* THEME TOGGLE */}
           <li>
-            <button className="icon-btn" onClick={toggleTheme}>
+            <button className="icon-btn glass-btn" onClick={toggleTheme}>
               {theme === "dark" ? "🌞" : "🌙"}
             </button>
           </li>
 
-          {/* Admin login/logout */}
+          {/* ADMIN LOGIN */}
           <li>
             <button
-              className="icon-btn"
+              className="icon-btn glass-btn"
               onClick={() =>
                 loggedIn ? handleLogout() : setShowLoginModal(true)
               }
@@ -156,24 +151,27 @@ function Navbar() {
         </ul>
       </nav>
 
-      {/* Admin Login Modal */}
+      {/* LOGIN MODAL */}
       {showLoginModal && (
         <div className="modal-overlay">
-          <div className="modal-box fade-in">
-            <button className="close-btn" onClick={() => setShowLoginModal(false)}>
+          <div className="modal-box glass-box fade-in">
+            <button
+              className="close-btn"
+              onClick={() => setShowLoginModal(false)}
+            >
               ✖
             </button>
-            <h3>Admin Login</h3>
 
+            <h3>Admin Login</h3>
             <input
               type="password"
+              className="form-control"
               placeholder="Enter Admin PIN"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
-              className="form-control"
             />
 
-            <button className="confirm-btn" onClick={handleAdminLogin}>
+            <button className="confirm-btn glow" onClick={handleAdminLogin}>
               Login ✔
             </button>
           </div>

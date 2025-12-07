@@ -3,8 +3,11 @@ import { toast } from "react-toastify";
 
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
+import useReveal from "../hooks/useReveal";
 
 function AdminLogin({ onLogin }) {
+  useReveal(); // animation (no logic change)
+
   const [pin, setPin] = useState("");
 
   const handleLogin = async () => {
@@ -32,17 +35,22 @@ function AdminLogin({ onLogin }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-box">
-        <h3>Admin Login</h3>
+    <div className="modal-overlay reveal">
+      <div className="modal-box admin-login-box">
+        <h3 className="admin-title">Admin Login</h3>
+
         <input
           type="password"
           maxLength="4"
+          className="admin-input"
           placeholder="Enter PIN"
           value={pin}
           onChange={(e) => setPin(e.target.value)}
         />
-        <button onClick={handleLogin}>Login</button>
+
+        <button className="admin-login-btn" onClick={handleLogin}>
+          Login
+        </button>
       </div>
     </div>
   );
