@@ -1,9 +1,9 @@
-import "../index.css";
-import { useState } from "react";
-import { toast } from "react-toastify";
+import React, { useState } from "react";
+import { FaPhoneAlt, FaWhatsapp, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 
 function Contact() {
-  const [form, setForm] = useState({
+
+  const [formData, setFormData] = useState({
     name: "",
     phone: "",
     message: "",
@@ -11,116 +11,130 @@ function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!form.name || !form.phone || !form.message) {
-      toast.error("Please fill all fields!");
-      return;
-    }
-
-    const phoneNumber = `91${form.phone.replace(/\D/g, "")}`;
-
-    const msg = `📩 New Contact Message
-Name: ${form.name}
-Phone: ${form.phone}
-Message: ${form.message}`;
-
-    window.open(
-      `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`,
-      "_blank"
-    );
-
-    toast.success("Message sent on WhatsApp ✔");
-
-    setForm({ name: "", phone: "", message: "" });
+    alert("Message sent!");
+    setFormData({ name: "", phone: "", message: "" });
   };
 
   return (
     <div className="page-section fade-in">
+
+      {/* TITLE */}
       <h2 className="section-title">Contact Us</h2>
-      <p className="contact-subtitle">We’d love to hear from you! Reach out anytime.</p>
+      <p className="section-sub">
+        We are here to make your event memorable. Reach us anytime!
+      </p>
 
-      {/* CONTACT OPTIONS */}
-      <div className="contact-section">
-        <div className="contact-grid">
+      {/* CONTACT GRID */}
+      <div className="contact-grid mt-24">
 
-          {/* 📞 Phone */}
-          <div className="contact-card glass-card">
-            <h3>Call Us</h3>
-            <p className="contact-info">Need quick assistance? Call us directly.</p>
-            <a href="tel:+919876543210" className="contact-btn">
-              📞 Call Now
-            </a>
-          </div>
+        {/* 1️⃣ PHONE */}
+        <div className="contact-card zoom-in">
+          <FaPhoneAlt size={28} color="#00eaff" style={{ marginBottom: "10px" }} />
+          <h3 style={{ marginBottom: "6px" }}>Call Us</h3>
 
-          {/* 💬 WhatsApp */}
-          <div className="contact-card glass-card">
-            <h3>WhatsApp</h3>
-            <p className="contact-info">Chat instantly with our support team.</p>
-            <a
-              href="https://wa.me/919876543210"
-              target="_blank"
-              className="contact-btn"
-            >
-              💬 Chat Now
-            </a>
-          </div>
+          <p className="contact-info">+91 98765 43210</p>
 
-          {/* 📷 Instagram */}
-          <div className="contact-card glass-card">
-            <h3>Instagram</h3>
-            <p className="contact-info">Follow us for event updates and work.</p>
-            <a
-              href="https://instagram.com/praba_events"
-              target="_blank"
-              className="contact-btn"
-            >
-              📷 Follow Us
-            </a>
-          </div>
-
+          <a href="tel:+919876543210" className="contact-btn">
+            Call Now
+          </a>
         </div>
 
-        {/* CONTACT FORM */}
-        <h3 className="section-title" style={{ marginTop: "35px" }}>Send Us a Message</h3>
+        {/* 2️⃣ WHATSAPP */}
+        <div className="contact-card zoom-in">
+          <FaWhatsapp size={32} color="#25D366" style={{ marginBottom: "10px" }} />
+          <h3 style={{ marginBottom: "6px" }}>Chat on WhatsApp</h3>
 
-        <form className="contact-form glass-card" onSubmit={handleSubmit}>
-          <input
-            className="form-input"
-            type="text"
-            placeholder="Your Name"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
+          <p className="contact-info">Available 24/7</p>
 
-          <input
-            className="form-input"
-            type="tel"
-            placeholder="WhatsApp Number"
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-          />
-
-          <textarea
-            className="form-textarea"
-            placeholder="Your Message"
-            value={form.message}
-            onChange={(e) => setForm({ ...form, message: e.target.value })}
-          ></textarea>
-
-          <button type="submit" className="contact-btn" style={{ width: "100%" }}>
-            Send Message ✔
-          </button>
-        </form>
-
-        {/* GOOGLE MAP */}
-        <div className="map-container">
-          <iframe
-            loading="lazy"
-            allowFullScreen
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.46251424675!2d77.960967!3d10.996178"
-          ></iframe>
+          <a
+            href="https://wa.me/919876543210"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-btn"
+          >
+            Message Now
+          </a>
         </div>
+
+        {/* 3️⃣ EMAIL */}
+        <div className="contact-card zoom-in">
+          <FaEnvelope size={32} color="#00eaff" style={{ marginBottom: "10px" }} />
+          <h3 style={{ marginBottom: "6px" }}>Email</h3>
+
+          <p className="contact-info">contact@prabaevents.com</p>
+
+          <a href="mailto:contact@prabaevents.com" className="contact-btn">
+            Send Email
+          </a>
+        </div>
+
+        {/* 4️⃣ LOCATION */}
+        <div className="contact-card zoom-in">
+          <FaMapMarkerAlt size={32} color="#ff4d4d" style={{ marginBottom: "10px" }} />
+          <h3 style={{ marginBottom: "6px" }}>Location</h3>
+
+          <p className="contact-info">Coimbatore, Tamil Nadu</p>
+
+          <a href="#map" className="contact-btn">
+            View Map
+          </a>
+        </div>
+
       </div>
+
+      {/* CONTACT FORM */}
+      <form className="contact-form slide-up" onSubmit={handleSubmit}>
+
+        <input
+          type="text"
+          className="form-input"
+          placeholder="Your Name"
+          value={formData.name}
+          onChange={(e) =>
+            setFormData({ ...formData, name: e.target.value })
+          }
+          required
+        />
+
+        <input
+          type="tel"
+          className="form-input"
+          placeholder="Phone Number"
+          value={formData.phone}
+          onChange={(e) =>
+            setFormData({ ...formData, phone: e.target.value })
+          }
+          required
+        />
+
+        <textarea
+          className="form-textarea"
+          placeholder="Your Message"
+          value={formData.message}
+          onChange={(e) =>
+            setFormData({ ...formData, message: e.target.value })
+          }
+          required
+        />
+
+        <button className="contact-btn glow" type="submit">
+          Send Message
+        </button>
+      </form>
+
+      {/* MAP */}
+      <div id="map" className="map-container mt-24">
+        <iframe
+          title="map"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          loading="lazy"
+          allowFullScreen
+          src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15674.456!2d76.967!3d11.001!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba857faaa...">
+        </iframe>
+      </div>
+
     </div>
   );
 }

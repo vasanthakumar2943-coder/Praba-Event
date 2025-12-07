@@ -13,6 +13,8 @@ import Events from "./Components/Events.jsx";
 import Admin from "./Components/Admin.jsx";
 import Footer from "./Components/Footer.jsx";
 import BookingHistory from "./Components/BookingHistory.jsx";
+import Booking from "./Components/Booking";
+
 
 // ⭐ Optional Upgrades (Use only if added)
 // import FloatingContact from "./Components/FloatingContact.jsx";
@@ -42,6 +44,8 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/history" element={<BookingHistory />} />
+          <Route path="/booking" element={<Booking />} />
+
 
           {/* PROTECTED ADMIN PAGE */}
           <Route

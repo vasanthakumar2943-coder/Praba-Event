@@ -42,9 +42,7 @@ function EventCard({ id, name, price, image }) {
 
     if (date < today) return true;
 
-    return bookedDates.some(
-      (d) => d.toDateString() === date.toDateString()
-    );
+    return bookedDates.some((d) => d.toDateString() === date.toDateString());
   };
 
   const handleContinue = () => {
@@ -82,7 +80,7 @@ function EventCard({ id, name, price, image }) {
 
       const msg = `📩 New Booking Request\n\nEvent: ${name}\nDate: ${
         selectedDate.toISOString().split("T")[0]
-      }\nName: ${customer.name}\nPhone: ${cleanPhone}\n\nPlease open Admin Panel to confirm.`;
+      }\nName: ${customer.name}\nPhone: ${cleanPhone}`;
 
       window.open(
         `https://wa.me/${adminNumber}?text=${encodeURIComponent(msg)}`,
@@ -93,7 +91,6 @@ function EventCard({ id, name, price, image }) {
       setShowForm(false);
       setCustomer({ name: "", phone: "" });
       setSelectedDate(null);
-
     } catch (error) {
       console.error("Booking error:", error);
       toast.error("Booking failed");
@@ -103,7 +100,7 @@ function EventCard({ id, name, price, image }) {
   return (
     <>
       {/* EVENT CARD */}
-      <div className="event-card reveal zoom-in">
+      <div className="event-card zoom-in fade-in">
         {loading ? (
           <div className="shimmer"></div>
         ) : (
@@ -125,7 +122,9 @@ function EventCard({ id, name, price, image }) {
       {/* MODAL */}
       {showModal && (
         <div className="modal-overlay fade-in">
-          <div className="modal-box fade-in glass-box">
+          <div className="modal-box fade-in">
+
+            {/* Close Button */}
             <button
               className="close-btn"
               onClick={() => {
@@ -137,12 +136,12 @@ function EventCard({ id, name, price, image }) {
               ✖
             </button>
 
-            {/* STEP 1 — GLASS CALENDAR */}
+            {/* STEP 1 — SELECT DATE */}
             {!showForm ? (
               <>
-                <h3>Select Date</h3>
+                <h3 style={{ textAlign: "center", marginBottom: "10px" }}>Select Date</h3>
 
-                <div className="calendar-glass-wrapper">
+                <div className="calendar-glass-wrapper zoom-in">
                   {loading ? (
                     <p>Loading calendar...</p>
                   ) : (
@@ -170,29 +169,32 @@ function EventCard({ id, name, price, image }) {
             ) : (
               <>
                 {/* STEP 2 — USER FORM */}
-                <h3>Enter Your Details</h3>
+                <h3 style={{ textAlign: "center" }}>Enter Your Details</h3>
 
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-input"
                   placeholder="Your Name"
                   value={customer.name}
                   onChange={(e) =>
                     setCustomer({ ...customer, name: e.target.value })
                   }
-                  style={{ marginTop: "10px" }}
                 />
 
-                <div className="phone-field">
+                <div
+                  className="phone-field"
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
                     width="26"
                     height="26"
                     alt="WhatsApp"
                   />
+
                   <input
                     type="tel"
-                    className="form-control"
+                    className="form-input"
                     placeholder="WhatsApp Number"
                     value={customer.phone}
                     onChange={(e) =>

@@ -1,90 +1,83 @@
-import useReveal from "../hooks/useReveal";
-import "../index.css";
+import React from "react";
 
 function About() {
-  useReveal();
-
   return (
-    <div>
+    <div className="page-section fade-in">
 
-      {/* ⭐ ABOUT HERO SECTION */}
-      <section className="about-hero reveal" style={{ textAlign: "center", paddingTop: "40px" }}>
-        <h1 className="section-title">About Praba Events</h1>
-        <p className="about-subtitle">
-          Crafting unforgettable experiences with passion, creativity, and precision.
-        </p>
-      </section>
+      {/* TITLE */}
+      <h2 className="section-title">About Us</h2>
+      <p className="section-sub">
+        Creating memorable events with passion, creativity & unmatched perfection.
+      </p>
 
-      {/* ⭐ WHO WE ARE */}
-      <section className="about-section reveal">
-        <h2 className="section-heading">Who We Are</h2>
+      {/* ABOUT SECTION */}
+      <div className="about-section slide-up">
+
         <p className="about-text">
-          Praba Events is a professional event management company dedicated to delivering
-          beautifully planned and flawlessly executed events. From intimate celebrations
-          to large-scale functions, we blend creativity with perfection to turn your
-          moments into memories.  
-        </p>
-        <p className="about-text">
-          Our team combines years of experience with innovative ideas, ensuring that every
-          client receives a unique and customized experience. Whether it's a wedding,
-          birthday, corporate meet, or cultural program — we bring your vision to life with
-          passion and commitment.
-        </p>
-      </section>
-
-      {/* ⭐ OUR MISSION & VALUES */}
-      <section className="about-section reveal">
-        <h2 className="section-heading">Our Mission</h2>
-        <p className="about-text">
-          To deliver exceptional event experiences through seamless planning, creative designs,
-          and world-class execution — making every celebration memorable and stress-free.
+          At <strong>Praba Event’s</strong>, we believe every occasion deserves to be 
+          unforgettable. With years of expertise in event management, we specialize in 
+          transforming ordinary moments into extraordinary memories. Our team handles 
+          everything from décor, lighting, entertainment, stage setup, venue design, 
+          and complete event coordination — ensuring a seamless experience from start to finish.
         </p>
 
-        <h2 className="section-heading" style={{ marginTop: "25px" }}>
-          Our Core Values
-        </h2>
-        <ul className="about-list">
-          <li>🎯 **Professionalism** – Every event is handled with expert precision.</li>
-          <li>💡 **Creativity** – Unique ideas tailored to each client’s style.</li>
-          <li>🤝 **Commitment** – We deliver what we promise, beyond expectations.</li>
-          <li>✨ **Quality** – From décor to service, excellence in every detail.</li>
-          <li>📅 **Timeliness** – On-time planning, on-time execution. Always.</li>
-        </ul>
-      </section>
+        <p className="about-text" style={{ marginTop: "14px" }}>
+          Whether it’s a wedding, reception, birthday celebration, corporate event, 
+          cultural program, or private gathering — we create stunning experiences 
+          tailored to your vision.
+        </p>
+      </div>
 
-      {/* ⭐ WHY CHOOSE US */}
-      <section className="about-section reveal">
-        <h2 className="section-heading">Why Choose Praba Events?</h2>
+      {/* WHY CHOOSE US */}
+      <h2 className="section-title" style={{ marginTop: "40px" }}>Why Choose Us?</h2>
 
-        <div className="why-grid">
-          <div className="why-card">
-            <h3>Experienced Team</h3>
-            <p>Our professionals handle every event with skill and precision.</p>
-          </div>
-          <div className="why-card">
-            <h3>End-to-End Service</h3>
-            <p>We manage décor, planning, coordination, and execution — smoothly.</p>
-          </div>
-          <div className="why-card">
-            <h3>Affordable Packages</h3>
-            <p>Premium quality events at budget-friendly prices.</p>
-          </div>
-          <div className="why-card">
-            <h3>Creative Concepts</h3>
-            <p>Unique themes and ideas crafted specially for your occasion.</p>
-          </div>
+      <div className="why-grid fade-in">
+
+        <div className="why-card zoom-in">
+          <i
+            className="fa-solid fa-star"
+            style={{ fontSize: "2rem", color: "#00eaff", marginBottom: "10px" }}
+          ></i>
+          <h3>Professional Team</h3>
+          <p style={{ opacity: 0.85, marginTop: "6px" }}>
+            Experienced planners and designers dedicated to creating premium events.
+          </p>
         </div>
-      </section>
 
-      {/* ⭐ OUR COMMITMENT */}
-      <section className="about-section reveal" style={{ textAlign: "center" }}>
-        <h2 className="section-heading">Our Commitment to You</h2>
-        <p className="about-text">
-          At Praba Events, your celebration is our responsibility.
-          We ensure a stress-free experience, flawless execution,
-          and unforgettable memories — every single time.
-        </p>
-      </section>
+        <div className="why-card zoom-in">
+          <i
+            className="fa-solid fa-wand-magic-sparkles"
+            style={{ fontSize: "2rem", color: "#00eaff", marginBottom: "10px" }}
+          ></i>
+          <h3>Creative Designs</h3>
+          <p style={{ opacity: 0.85, marginTop: "6px" }}>
+            Unique décor themes crafted to match your dream and personality.
+          </p>
+        </div>
+
+        <div className="why-card zoom-in">
+          <i
+            className="fa-solid fa-thumbs-up"
+            style={{ fontSize: "2rem", color: "#00eaff", marginBottom: "10px" }}
+          ></i>
+          <h3>Quality Service</h3>
+          <p style={{ opacity: 0.85, marginTop: "6px" }}>
+            We ensure premium quality in every detail — from décor to execution.
+          </p>
+        </div>
+
+        <div className="why-card zoom-in">
+          <i
+            className="fa-solid fa-handshake-simple"
+            style={{ fontSize: "2rem", color: "#00eaff", marginBottom: "10px" }}
+          ></i>
+          <h3>Affordable Packages</h3>
+          <p style={{ opacity: 0.85, marginTop: "6px" }}>
+            Premium event experiences at budget-friendly, customizable pricing.
+          </p>
+        </div>
+
+      </div>
 
     </div>
   );

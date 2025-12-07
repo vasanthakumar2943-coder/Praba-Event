@@ -1,65 +1,68 @@
-import useReveal from "../hooks/useReveal";
-import "../index.css";
+import React from "react";
 
 function Services() {
-  useReveal();
-
   const services = [
     {
+      id: 1,
+      icon: "fa-solid fa-champagne-glasses",
       title: "Wedding Planning",
-      desc: "Beautifully organized weddings with theme décor, stage setup, catering, photography, guest management, and complete event coordination.",
-      icon: "💍",
+      desc: "Premium décor, stage setup, floral arrangements, lighting & complete wedding coordination."
     },
     {
-      title: "Birthday Decorations",
-      desc: "Creative balloon themes, LED backdrops, customized props, cake table décor, and entertainment arrangements for all ages.",
-      icon: "🎉",
+      id: 2,
+      icon: "fa-solid fa-music",
+      title: "DJ & Music Setup",
+      desc: "High-quality sound systems, professional DJs, live music & atmosphere lighting."
     },
     {
+      id: 3,
+      icon: "fa-solid fa-cake-candles",
+      title: "Birthday Events",
+      desc: "Unique themes, balloon décor, cake table setup, kids entertainment & photography."
+    },
+    {
+      id: 4,
+      icon: "fa-solid fa-building",
       title: "Corporate Events",
-      desc: "Seminars, branding events, product launches, and official gatherings with professional arrangements and premium setups.",
-      icon: "🏢",
+      desc: "Stage design, LED screens, branding backdrop, sound systems & event coordination."
     },
     {
-      title: "Catering Services",
-      desc: "Delicious vegetarian and non-veg menus, live counters, buffet arrangements, and hygienic, premium-quality food service.",
-      icon: "🍽️",
+      id: 5,
+      icon: "fa-solid fa-lightbulb",
+      title: "Lighting & Effects",
+      desc: "Ambient lighting, spotlight arrangement, LED décor, smoke effects & more."
     },
     {
-      title: "Photography & Videography",
-      desc: "HD photography, cinematic videography, drone shots, candid photos, reels creation, and complete event coverage.",
-      icon: "📸",
-    },
-    {
-      title: "Stage & Lighting Setup",
-      desc: "Professional event lighting, truss setup, audio systems, LED panels, themed stage designs, and premium backdrop décor.",
-      icon: "🎭",
-    },
+      id: 6,
+      icon: "fa-solid fa-people-group",
+      title: "Reception Setup",
+      desc: "Elegant stage décor, floral arrangements, entrance arch, walkway lights & backdrop design."
+    }
   ];
 
   return (
-    <div>
+    <div className="page-section fade-in">
 
-      {/* ⭐ SERVICES HEADER */}
-      <section className="services-hero reveal" style={{ textAlign: "center", paddingTop: "30px" }}>
-        <h1 className="section-title">Our Services</h1>
-        <p className="services-subtitle">
-          Premium event solutions crafted to make your celebrations extraordinary.
-        </p>
-      </section>
+      {/* Page Heading */}
+      <h2 className="section-title">Our Services</h2>
+      <p className="section-sub">
+        We offer a wide range of event services designed to make your special moments truly unforgettable.
+      </p>
 
-      {/* ⭐ SERVICES GRID */}
-      <section className="services-section reveal">
+      {/* Services Grid */}
+      <div className="services-section">
         <div className="services-grid">
-          {services.map((s, i) => (
-            <div className="service-card" key={i}>
-              <div className="service-icon">{s.icon}</div>
+
+          {services.map((s) => (
+            <div className="service-card zoom-in" key={s.id}>
+              <i className={`${s.icon} service-icon`}></i>
               <h3 className="service-title">{s.title}</h3>
               <p className="service-desc">{s.desc}</p>
             </div>
           ))}
+
         </div>
-      </section>
+      </div>
 
     </div>
   );

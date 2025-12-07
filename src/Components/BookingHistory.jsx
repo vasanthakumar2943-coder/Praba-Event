@@ -5,7 +5,7 @@ import "../index.css";
 import useReveal from "../hooks/useReveal";
 
 function BookingHistory() {
-  useReveal(); // animation only, no logic change
+  useReveal(); // animations only
 
   const [phone, setPhone] = useState("");
   const [bookings, setBookings] = useState([]);
@@ -56,41 +56,47 @@ function BookingHistory() {
   };
 
   return (
-    <div className="page-section reveal" style={{ textAlign: "center" }}>
+    <div className="page-section fade-in" style={{ textAlign: "center" }}>
       <h2 className="section-title">Your Booking History</h2>
 
       {/* PHONE INPUT */}
-      <div style={{ maxWidth: "350px", margin: "20px auto" }}>
+      <div style={{ maxWidth: "360px", margin: "20px auto" }}>
         <input
           type="tel"
-          className="form-control"
-          placeholder="Enter your WhatsApp number"
+          className="form-input"
+          placeholder="Enter WhatsApp Number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
+
         <button
           className="confirm-btn glow"
           style={{ marginTop: "10px" }}
           onClick={fetchHistory}
         >
-          Show My Booking History
+          Show History
         </button>
       </div>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p style={{ marginTop: "10px" }}>Loading...</p>}
 
       {/* No Results */}
       {showResults &&
         bookings.upcoming?.length === 0 &&
         bookings.past?.length === 0 && (
-          <p className="no-events-text fade-in">No bookings found for this number.</p>
+          <p className="no-events-text fade-in">
+            No bookings found for this number.
+          </p>
         )}
 
       {/* UPCOMING BOOKINGS */}
       {bookings.upcoming?.length > 0 && (
         <>
-          <h3 className="section-title highlight-title">Upcoming Bookings</h3>
-          <div className="table-wrapper reveal">
+          <h3 className="section-title" style={{ marginTop: "30px" }}>
+            Upcoming Bookings
+          </h3>
+
+          <div className="admin-table-wrap reveal">
             <table className="admin-table">
               <thead>
                 <tr>
@@ -101,6 +107,7 @@ function BookingHistory() {
                   <th>Cancel</th>
                 </tr>
               </thead>
+
               <tbody>
                 {bookings.upcoming.map((b) => (
                   <tr key={b.id}>
@@ -108,13 +115,14 @@ function BookingHistory() {
                       <img
                         src={b.image || "/placeholder.jpg"}
                         alt={b.event}
-                        width="60"
-                        height="40"
                         className="history-img"
                       />
                     </td>
+
                     <td>{b.event}</td>
+
                     <td>{b.date}</td>
+
                     <td>
                       {b.confirmed ? (
                         <span className="status-confirmed">Confirmed ✔</span>
@@ -122,6 +130,7 @@ function BookingHistory() {
                         <span className="status-pending">Pending ⏳</span>
                       )}
                     </td>
+
                     <td>
                       {!b.confirmed && (
                         <button
@@ -143,10 +152,11 @@ function BookingHistory() {
       {/* PAST BOOKINGS */}
       {bookings.past?.length > 0 && (
         <>
-          <h3 className="section-title highlight-title" style={{ marginTop: "30px" }}>
+          <h3 className="section-title" style={{ marginTop: "35px" }}>
             Past Bookings
           </h3>
-          <div className="table-wrapper reveal">
+
+          <div className="admin-table-wrap reveal">
             <table className="admin-table">
               <thead>
                 <tr>
@@ -156,6 +166,7 @@ function BookingHistory() {
                   <th>Status</th>
                 </tr>
               </thead>
+
               <tbody>
                 {bookings.past.map((b) => (
                   <tr key={b.id}>
@@ -163,13 +174,14 @@ function BookingHistory() {
                       <img
                         src={b.image || "/placeholder.jpg"}
                         alt={b.event}
-                        width="60"
-                        height="40"
                         className="history-img"
                       />
                     </td>
+
                     <td>{b.event}</td>
+
                     <td>{b.date}</td>
+
                     <td>
                       {b.confirmed ? (
                         <span className="status-confirmed">Completed ✔</span>
