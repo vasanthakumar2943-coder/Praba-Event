@@ -1,21 +1,34 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+
 function AdminLogin({ onLogin }) {
   const [pin, setPin] = useState("");
 
-  const handleLogin = () => {
-    fetch("http://localhost:8080/admin")
-      .then(res => res.json())
-      .then(data => {
-        if (data.pin === pin) {
+  const handleLogin = async () => {
+    try {
+      const adminRef = doc(db, "settings", "admin");
+      const adminSnap = await getDoc(adminRef);
+
+      if (adminSnap.exists()) {
+        const correctPin = adminSnap.data().pin;
+
+        if (correctPin === pin) {
           localStorage.setItem("adminAuth", "true");
           toast.success("Login Successful 🎉");
           onLogin();
         } else {
           toast.error("Incorrect PIN ❌");
         }
-      });
+      } else {
+        toast.error("Admin PIN not set in Firestore ⚠️");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Login failed ❌");
+    }
   };
 
   return (

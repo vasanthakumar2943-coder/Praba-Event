@@ -1,13 +1,27 @@
 import { useEffect, useState } from "react";
 import "../index.css";
 
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
+
 function Home() {
   const [gallery, setGallery] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/events")
-      .then(res => res.json())
-      .then(data => setGallery(data));
+    const loadGallery = async () => {
+      try {
+        const eventSnap = await getDocs(collection(db, "events"));
+        const eventList = eventSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setGallery(eventList);
+      } catch (error) {
+        console.error("Failed to load gallery:", error);
+      }
+    };
+
+    loadGallery();
   }, []);
 
   return (
