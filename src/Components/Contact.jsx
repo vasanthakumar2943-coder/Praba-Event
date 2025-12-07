@@ -1,93 +1,126 @@
-import useReveal from "../hooks/useReveal";
 import "../index.css";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 function Contact() {
-  useReveal();
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    message: "",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!form.name || !form.phone || !form.message) {
+      toast.error("Please fill all fields!");
+      return;
+    }
+
+    const phoneNumber = `91${form.phone.replace(/\D/g, "")}`;
+
+    const msg = `📩 New Contact Message
+Name: ${form.name}
+Phone: ${form.phone}
+Message: ${form.message}`;
+
+    window.open(
+      `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`,
+      "_blank"
+    );
+
+    toast.success("Message sent on WhatsApp ✔");
+
+    setForm({ name: "", phone: "", message: "" });
+  };
 
   return (
-    <div>
+    <div className="page-section fade-in">
+      <h2 className="section-title">Contact Us</h2>
+      <p className="contact-subtitle">We’d love to hear from you! Reach out anytime.</p>
 
-      {/* ⭐ CONTACT HEADER */}
-      <section className="contact-hero reveal" style={{ textAlign: "center", paddingTop: "30px" }}>
-        <h1 className="section-title">Contact Us</h1>
-        <p className="contact-subtitle">
-          We’re here to help you plan the perfect event. Reach out anytime!
-        </p>
-      </section>
-
-      {/* ⭐ CONTACT DETAILS */}
-      <section className="contact-section reveal">
+      {/* CONTACT OPTIONS */}
+      <div className="contact-section">
         <div className="contact-grid">
 
-          {/* Contact Card 1 */}
-          <div className="contact-card">
-            <h3>📞 Phone</h3>
-            <p className="contact-info">+91 98765 43210</p>
-            <button
-              className="contact-btn"
-              onClick={() => (window.location.href = 'tel:+919876543210')}
-            >
-              Call Now
-            </button>
+          {/* 📞 Phone */}
+          <div className="contact-card glass-card">
+            <h3>Call Us</h3>
+            <p className="contact-info">Need quick assistance? Call us directly.</p>
+            <a href="tel:+919876543210" className="contact-btn">
+              📞 Call Now
+            </a>
           </div>
 
-          {/* Contact Card 2 */}
-          <div className="contact-card">
-            <h3>💬 WhatsApp</h3>
-            <p className="contact-info">Chat with us for quick support</p>
-            <button
+          {/* 💬 WhatsApp */}
+          <div className="contact-card glass-card">
+            <h3>WhatsApp</h3>
+            <p className="contact-info">Chat instantly with our support team.</p>
+            <a
+              href="https://wa.me/919876543210"
+              target="_blank"
               className="contact-btn"
-              onClick={() => (window.location.href = 'https://wa.me/919876543210')}
             >
-              Message on WhatsApp
-            </button>
+              💬 Chat Now
+            </a>
           </div>
 
-          {/* Contact Card 3 */}
-          <div className="contact-card">
-            <h3>📍 Location</h3>
-            <p className="contact-info">Tamil Nadu, India</p>
-            <button
+          {/* 📷 Instagram */}
+          <div className="contact-card glass-card">
+            <h3>Instagram</h3>
+            <p className="contact-info">Follow us for event updates and work.</p>
+            <a
+              href="https://instagram.com/praba_events"
+              target="_blank"
               className="contact-btn"
-              onClick={() => (window.location.href = 'https://maps.google.com')}
             >
-              View on Map
-            </button>
+              📷 Follow Us
+            </a>
           </div>
 
         </div>
-      </section>
 
-      {/* ⭐ CONTACT FORM */}
-      <section className="contact-section reveal">
-        <h2 className="section-heading" style={{ textAlign: "center" }}>Send Us a Message</h2>
+        {/* CONTACT FORM */}
+        <h3 className="section-title" style={{ marginTop: "35px" }}>Send Us a Message</h3>
 
-        <form className="contact-form">
-          <input type="text" placeholder="Your Name" className="form-input" />
-          <input type="email" placeholder="Your Email" className="form-input" />
-          <input type="text" placeholder="Phone Number" className="form-input" />
-          <textarea placeholder="Your Message" className="form-textarea"></textarea>
+        <form className="contact-form glass-card" onSubmit={handleSubmit}>
+          <input
+            className="form-input"
+            type="text"
+            placeholder="Your Name"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
 
-          <button type="button" className="confirm-btn glow">
-            Send Message
+          <input
+            className="form-input"
+            type="tel"
+            placeholder="WhatsApp Number"
+            value={form.phone}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          />
+
+          <textarea
+            className="form-textarea"
+            placeholder="Your Message"
+            value={form.message}
+            onChange={(e) => setForm({ ...form, message: e.target.value })}
+          ></textarea>
+
+          <button type="submit" className="contact-btn" style={{ width: "100%" }}>
+            Send Message ✔
           </button>
         </form>
-      </section>
 
-      {/* ⭐ MAP SECTION (Optional, Clean UI) */}
-      <section className="contact-map reveal">
-        <h2 className="section-heading" style={{ textAlign: "center" }}>Find Us</h2>
-
+        {/* GOOGLE MAP */}
         <div className="map-container">
           <iframe
-            title="location"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3..."
-            allowFullScreen=""
             loading="lazy"
+            allowFullScreen
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.46251424675!2d77.960967!3d10.996178"
           ></iframe>
         </div>
-      </section>
-
+      </div>
     </div>
   );
 }

@@ -1,55 +1,69 @@
 import "../index.css";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <footer className="footer glass-footer reveal">
+    <footer className="glass-footer fade-in">
       <div className="footer-content">
 
         {/* BRAND */}
-        <div className="footer-section">
-          <h2 className="footer-logo">Praba Events</h2>
+        <div>
+          <h2 className="footer-logo">Praba Event's</h2>
           <p className="footer-text">
-            Creating unforgettable moments with creativity & passion.
+            We transform your special moments into unforgettable memories.
+            Professional event planning, decorations & photography services.
           </p>
         </div>
 
         {/* QUICK LINKS */}
-        <div className="footer-section">
+        <div>
           <h3 className="footer-heading">Quick Links</h3>
           <ul className="footer-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/services">Services</a></li>
-            <li><a href="/events">Events</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/events">Events</Link></li>
+            <li><Link to="/projects">Projects</Link></li>
+            <li><Link to="/history">Booking History</Link></li>
           </ul>
         </div>
 
         {/* CONTACT INFO */}
-        <div className="footer-section">
+        <div>
           <h3 className="footer-heading">Contact</h3>
+          <p className="footer-contact">📞 +91 98765 43210</p>
+          <p className="footer-contact">📩 prabaevents@gmail.com</p>
+          <p className="footer-contact">📍 Tamil Nadu, India</p>
 
-          <p className="footer-contact">
-            📍 Tamil Nadu, India
-          </p>
-          <p className="footer-contact">
-            📞 +91 98765 43210
-          </p>
-          <p className="footer-contact">
-            ✉️ prabaeventsofficial@gmail.com
-          </p>
-
+          {/* SOCIAL ICONS */}
           <div className="footer-social">
-            <a href="tel:+919876543210" className="footer-icon">📞</a>
-            <a href="https://wa.me/919876543210" target="_blank" className="footer-icon">💬</a>
-            <a href="https://instagram.com" target="_blank" className="footer-icon">📸</a>
-            <a href="mailto:prabaeventsofficial@gmail.com" className="footer-icon">✉️</a>
+            <a
+              href="https://wa.me/919876543210"
+              target="_blank"
+              className="footer-icon"
+            >
+              💬
+            </a>
+
+            <a
+              href="https://instagram.com/praba_events"
+              target="_blank"
+              className="footer-icon"
+            >
+              📷
+            </a>
+
+            <a
+              href="mailto:prabaevents@gmail.com"
+              className="footer-icon"
+            >
+              ✉️
+            </a>
           </div>
         </div>
 
       </div>
 
       <div className="footer-bottom">
-        © {new Date().getFullYear()} Praba Events — All Rights Reserved.
+        © {new Date().getFullYear()} Praba Event's — All Rights Reserved.
       </div>
     </footer>
   );
