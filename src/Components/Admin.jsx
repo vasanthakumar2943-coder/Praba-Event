@@ -2,6 +2,20 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "../index.css";
 
+import { db } from "../firebase";
+
+import {
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  setDoc,
+  getDoc,
+} from "firebase/firestore";
+
+
 function Admin() {
   const [events, setEvents] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -11,133 +25,162 @@ function Admin() {
   const [newEvent, setNewEvent] = useState({ name: "", price: "", image: "" });
   const [newImageFile, setNewImageFile] = useState(null);
 
-  const loadData = () => {
-    fetch("http://localhost:8080/events")
-      .then((res) => res.json())
-      .then((data) => setEvents(data));
-
-    fetch("http://localhost:8080/bookings")
-      .then((res) => res.json())
-      .then((data) => setBookings(data));
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  // Convert image file to base64
+  // Convert file to base64
   const fileToBase64 = (file, cb) => {
     const reader = new FileReader();
     reader.onloadend = () => cb(reader.result);
     reader.readAsDataURL(file);
   };
 
-  // Add new event
+  // Load Events + Bookings from Firestore
+  const loadData = async () => {
+    // Load events
+    const eventSnap = await getDocs(collection(db, "events"));
+    const eventList = eventSnap.docs.map((d) => ({
+      id: d.id,
+      ...d.data(),
+    }));
+    setEvents(eventList);
+
+    // Load bookings
+    const bookSnap = await getDocs(collection(db, "bookings"));
+    const bookList = bookSnap.docs.map((d) => ({
+      id: d.id,
+      ...d.data(),
+    }));
+    setBookings(bookList);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  // -------------------------
+  // ADD EVENT
+  // -------------------------
   const handleAddEvent = () => {
     if (!newEvent.name || !newEvent.price) {
       toast.warn("Enter event name & price");
       return;
     }
 
-    const submitEvent = (imageBase64) => {
-      const payload = {
-        ...newEvent,
-        image: imageBase64 || newEvent.image,
-      };
+    const submitEvent = async (imageBase64) => {
+      try {
+        await addDoc(collection(db, "events"), {
+          name: newEvent.name,
+          price: newEvent.price,
+          image: imageBase64 || newEvent.image,
+        });
 
-      fetch("http://localhost:8080/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }).then(() => {
         toast.success("Event added ✔");
         setNewEvent({ name: "", price: "", image: "" });
         setNewImageFile(null);
         loadData();
-      });
+      } catch (error) {
+        toast.error("Failed to add event");
+      }
     };
 
     if (newImageFile) {
       fileToBase64(newImageFile, submitEvent);
     } else {
-      submitEvent(newEvent.image); // in case already set
+      submitEvent(newEvent.image);
     }
   };
 
-  // Delete event with undo
-  const deleteEvent = (ev) => {
+  // -------------------------
+  // DELETE EVENT (with Undo)
+  // -------------------------
+  const deleteEvent = async (ev) => {
     const timeoutId = setTimeout(() => {
       setLastDeleted(null);
     }, 10000);
 
     setLastDeleted({ data: ev, timeoutId });
 
-    fetch(`http://localhost:8080/events/${ev.id}`, {
-      method: "DELETE",
-    }).then(() => {
+    try {
+      await deleteDoc(doc(db, "events", ev.id));
       toast.error("Event deleted. Undo for 10s.");
       setEvents((prev) => prev.filter((e) => e.id !== ev.id));
-    });
+    } catch {
+      toast.error("Delete failed");
+    }
   };
 
-  const undoDelete = () => {
+  // UNDO DELETE
+  const undoDelete = async () => {
     if (!lastDeleted) return;
     clearTimeout(lastDeleted.timeoutId);
 
-    fetch("http://localhost:8080/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(lastDeleted.data),
-    }).then(() => {
+    try {
+      await setDoc(doc(db, "events", lastDeleted.data.id), {
+        name: lastDeleted.data.name,
+        price: lastDeleted.data.price,
+        image: lastDeleted.data.image,
+      });
+
       toast.success("Delete undone ✔");
       setLastDeleted(null);
       loadData();
-    });
+    } catch {
+      toast.error("Restore failed");
+    }
   };
 
-  // Delete booking
-  const deleteBooking = (id) => {
-    fetch(`http://localhost:8080/bookings/${id}`, {
-      method: "DELETE",
-    }).then(() => {
+  // -------------------------
+  // DELETE BOOKING
+  // -------------------------
+  const deleteBooking = async (id) => {
+    try {
+      await deleteDoc(doc(db, "bookings", id));
       toast.info("Booking removed");
       loadData();
-    });
+    } catch {
+      toast.error("Booking delete failed");
+    }
   };
 
-  // Update PIN
-  const updatePIN = () => {
+  // -------------------------
+  // UPDATE ADMIN PIN
+  // Firestore: collection "settings" → document "admin"
+  // -------------------------
+  const updatePIN = async () => {
     if (!newPin) {
       toast.warn("Enter new PIN");
       return;
     }
 
-    fetch("http://localhost:8080/admin", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pin: newPin }),
-    }).then(() => {
+    try {
+      await setDoc(doc(db, "settings", "admin"), { pin: newPin });
       toast.success("PIN updated 🔐");
       setNewPin("");
-    });
+    } catch {
+      toast.error("Failed to update PIN");
+    }
   };
 
-  // Save event edit
-  const saveEventEdit = () => {
+  // -------------------------
+  // SAVE EDITED EVENT
+  // -------------------------
+  const saveEventEdit = async () => {
     if (!editingEvent) return;
 
-    fetch(`http://localhost:8080/events/${editingEvent.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editingEvent),
-    }).then(() => {
+    try {
+      await updateDoc(doc(db, "events", editingEvent.id), {
+        name: editingEvent.name,
+        price: editingEvent.price,
+        image: editingEvent.image,
+      });
+
       toast.success("Event updated ✔");
       setEditingEvent(null);
       loadData();
-    });
+    } catch {
+      toast.error("Update failed");
+    }
   };
 
-  // 🔓 Logout inside Admin page
+  // LOGOUT
   const logout = () => {
     localStorage.removeItem("admin-auth");
     toast.info("Logged Out");
@@ -148,7 +191,7 @@ function Admin() {
     <div className="page-section fade-in">
       <h2 className="section-title">Admin Dashboard</h2>
 
-      {/* Logout Button */}
+      {/* Logout */}
       <button
         className="confirm-btn"
         style={{ maxWidth: "160px", margin: "0 auto 20px" }}
@@ -157,7 +200,7 @@ function Admin() {
         Logout 🔓
       </button>
 
-      {/* Add Event Form */}
+      {/* ADD EVENT */}
       <h3 className="section-title" style={{ marginTop: "10px" }}>Add Event</h3>
       <div style={{ maxWidth: "400px", margin: "0 auto 20px auto" }}>
         <input
@@ -184,12 +227,7 @@ function Admin() {
           accept="image/*"
           className="form-control"
           style={{ marginTop: "8px" }}
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              setNewImageFile(file);
-            }
-          }}
+          onChange={(e) => setNewImageFile(e.target.files[0])}
         />
 
         <button
@@ -201,7 +239,7 @@ function Admin() {
         </button>
       </div>
 
-      {/* Undo button */}
+      {/* UNDO DELETE */}
       {lastDeleted && (
         <button
           className="confirm-btn"
@@ -212,7 +250,7 @@ function Admin() {
         </button>
       )}
 
-      {/* Events Table */}
+      {/* EVENTS LIST */}
       <h3 className="section-title" style={{ marginTop: "20px" }}>Events</h3>
       <table className="admin-table">
         <thead>
@@ -254,7 +292,7 @@ function Admin() {
         </tbody>
       </table>
 
-      {/* Bookings Table */}
+      {/* BOOKINGS TABLE */}
       <h3 className="section-title" style={{ marginTop: "30px" }}>Bookings</h3>
       <table className="admin-table">
         <thead>
@@ -286,7 +324,7 @@ function Admin() {
         </tbody>
       </table>
 
-      {/* Security Settings */}
+      {/* SECURITY SETTINGS */}
       <h3 className="section-title" style={{ marginTop: "30px" }}>
         Security Settings
       </h3>
@@ -307,7 +345,7 @@ function Admin() {
         </button>
       </div>
 
-      {/* Edit Event Modal */}
+      {/* EDIT EVENT MODAL */}
       {editingEvent && (
         <div className="modal-overlay">
           <div className="modal-box fade-in">

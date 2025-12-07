@@ -2,18 +2,32 @@ import { useEffect, useState } from "react";
 import EventCard from "./EventCard.jsx";
 import "../index.css";
 
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+
 function Events() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Load Events from Firestore
+  const loadEvents = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "events"));
+      const eventList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setEvents(eventList);
+    } catch (error) {
+      console.error("Error loading events:", error);
+    }
+
+    setLoading(false);
+  };
+
   useEffect(() => {
-    fetch("http://localhost:8080/events")
-      .then((res) => res.json())
-      .then((data) => {
-        setEvents(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    loadEvents();
   }, []);
 
   if (loading) {

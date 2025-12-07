@@ -11,7 +11,7 @@ import Projects from "./Components/Projects.jsx";
 import Events from "./Components/Events.jsx";   // PAGE (list)
 import Admin from "./Components/Admin.jsx";
 import Footer from "./Components/Footer.jsx";
-import Admin from "./Components/Admin.jsx";
+
 
 
 function ProtectedRoute({ children }) {

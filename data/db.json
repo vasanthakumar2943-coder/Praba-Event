@@ -16,14 +16,5 @@
       "image": "https://via.placeholder.com/300x200?text=Corporate+Event"
     }
   ],
-  "bookings": [
-    {
-      "id": "e5d9",
-      "eventId": "3",
-      "event": "Corporate Event",
-      "date": "2025-12-24",
-      "customerName": "s",
-      "phone": "555"
-    }
-  ]
+  "bookings": []
 }

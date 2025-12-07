@@ -4,6 +4,9 @@ import "react-calendar/dist/Calendar.css";
 import { toast } from "react-toastify";
 import "../index.css";
 
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+
 function EventCard({ id, name, price, image }) {
   const [showModal, setShowModal] = useState(false);
   const [bookedDates, setBookedDates] = useState([]);
@@ -12,18 +15,25 @@ function EventCard({ id, name, price, image }) {
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [loading, setLoading] = useState(true);
 
-  // Load booked dates
+  // Load booked dates from Firestore
   useEffect(() => {
-    fetch("http://localhost:8080/bookings")
-      .then((res) => res.json())
-      .then((data) => {
-        const dates = data
+    const loadBookings = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "bookings"));
+        const filtered = snapshot.docs
+          .map((doc) => doc.data())
           .filter((b) => b.eventId === id)
           .map((b) => new Date(b.date));
-        setBookedDates(dates);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+
+        setBookedDates(filtered);
+      } catch (error) {
+        console.error("Failed to load bookings:", error);
+      }
+
+      setLoading(false);
+    };
+
+    loadBookings();
   }, [id]);
 
   const disableDates = ({ date }) => {
@@ -44,33 +54,34 @@ function EventCard({ id, name, price, image }) {
     setShowForm(true);
   };
 
-  const handleBooking = () => {
+  // Save booking to Firestore
+  const handleBooking = async () => {
     if (!customer.name || !customer.phone) {
       toast.warn("Enter your details!");
       return;
     }
 
-    const newBooking = {
-      eventId: id,
-      event: name,
-      date: selectedDate.toISOString().split("T")[0],
-      customerName: customer.name,
-      phone: customer.phone,
-    };
+    try {
+      await addDoc(collection(db, "bookings"), {
+        eventId: id,
+        event: name,
+        date: selectedDate.toISOString().split("T")[0],
+        customerName: customer.name,
+        phone: customer.phone,
+        timestamp: Date.now(),
+      });
 
-    fetch("http://localhost:8080/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newBooking),
-    })
-      .then(() => {
-        toast.success("Booking Confirmed 🎉");
-        setShowModal(false);
-        setShowForm(false);
-        setCustomer({ name: "", phone: "" });
-        setSelectedDate(null);
-      })
-      .catch(() => toast.error("Booking failed"));
+      toast.success("Booking Confirmed 🎉");
+
+      // Reset states
+      setShowModal(false);
+      setShowForm(false);
+      setCustomer({ name: "", phone: "" });
+      setSelectedDate(null);
+    } catch (error) {
+      console.error("Booking error:", error);
+      toast.error("Booking failed");
+    }
   };
 
   return (
@@ -100,6 +111,7 @@ function EventCard({ id, name, price, image }) {
               ✖
             </button>
 
+            {/* Step 1: Select Date */}
             {!showForm ? (
               <>
                 <h3>Select Date</h3>
@@ -127,6 +139,7 @@ function EventCard({ id, name, price, image }) {
               </>
             ) : (
               <>
+                {/* Step 2: Enter Customer Info */}
                 <h3>Enter Your Details</h3>
                 <input
                   type="text"
