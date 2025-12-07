@@ -1,60 +1,58 @@
-import React from "react";
+import useReveal from "../hooks/useReveal";
+import "../index.css";
 
 function Projects() {
-  const projectList = [
+  useReveal();
+
+  const projects = [
     {
-      id: 1,
-      title: "Wedding Decoration",
-      desc: "Premium floral stage decor, lighting, and elegant arrangements.",
-      img: "https://picsum.photos/seed/project1/800/500"
+      title: "Grand Wedding Celebration",
+      desc: "Royal theme wedding décor with stage design, lighting, floral backdrop, and complete event coordination.",
+      img: "/assets/p1.jpg",
     },
     {
-      id: 2,
-      title: "Corporate Event Setup",
-      desc: "Professional stage, sound system, branding walls & LED backdrop.",
-      img: "https://picsum.photos/seed/project2/800/500"
+      title: "Corporate Annual Meet",
+      desc: "Professional stage setup, LED wall, sound system, seating arrangement, and event flow management.",
+      img: "/assets/p2.jpg",
     },
     {
-      id: 3,
-      title: "Birthday Theme Decor",
-      desc: "Creative theme decorations, balloons, cake table setup & more.",
-      img: "https://picsum.photos/seed/project3/800/500"
+      title: "Kids Birthday Theme",
+      desc: "Cartoon themed decoration, balloon arch, cake table décor, return gifts, and fun activities.",
+      img: "/assets/p3.jpg",
     },
     {
-      id: 4,
-      title: "Outdoor Event Lighting",
-      desc: "Powerful ambient lighting for receptions & open-air events.",
-      img: "https://picsum.photos/seed/project4/800/500"
+      title: "Baby Shower Event",
+      desc: "Elegant baby shower decoration with pastel theme, props, backdrop, and photography.",
+      img: "/assets/p4.jpg",
     },
     {
-      id: 5,
-      title: "Cultural Stage Setup",
-      desc: "Traditional stage design, lighting, seating & arrangements.",
-      img: "https://picsum.photos/seed/project5/800/500"
+      title: "Outdoor Reception",
+      desc: "Grand outdoor reception with floral décor, stage lighting, walkway setup, and premium seating.",
+      img: "/assets/p5.jpg",
     },
     {
-      id: 6,
-      title: "Grand Opening Decoration",
-      desc: "Premium ribbon-cutting stage, backdrop, flowers & signage.",
-      img: "https://picsum.photos/seed/project6/800/500"
-    }
+      title: "Cultural Function",
+      desc: "Traditional backdrop, lighting setup, seating, and stage decor for cultural programs.",
+      img: "/assets/p6.jpg",
+    },
   ];
 
   return (
-    <div className="page-section fade-in">
+    <div>
 
-      {/* Title */}
-      <h2 className="section-title">Our Projects</h2>
-      <p className="section-sub">
-        A showcase of our finest event works — crafted with passion & perfection.
-      </p>
+      {/* ⭐ PROJECTS HEADER */}
+      <section className="projects-hero reveal" style={{ textAlign: "center", paddingTop: "30px" }}>
+        <h1 className="section-title">Our Event Projects</h1>
+        <p className="projects-subtitle">
+          A showcase of beautifully designed and professionally executed events.
+        </p>
+      </section>
 
-      {/* Project Grid */}
-      <div className="projects-section">
+      {/* ⭐ PROJECTS GRID */}
+      <section className="projects-section reveal">
         <div className="projects-grid">
-
-          {projectList.map((p) => (
-            <div className="project-card zoom-in" key={p.id}>
+          {projects.map((p, i) => (
+            <div className="project-card" key={i}>
               <img src={p.img} alt={p.title} className="project-img" />
 
               <div className="project-info">
@@ -63,9 +61,8 @@ function Projects() {
               </div>
             </div>
           ))}
-
         </div>
-      </div>
+      </section>
 
     </div>
   );

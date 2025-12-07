@@ -1,22 +1,31 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import EventCard from "./EventCard.jsx";
 import "../index.css";
+
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 import useReveal from "../hooks/useReveal";
 
 function Events() {
-  useReveal();
+  useReveal(); // Animation trigger
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Load Events from Firestore (NO LOGIC CHANGES)
   const loadEvents = async () => {
     try {
-      const res = await fetch("http://localhost:8080/events");
-      const data = await res.json();
-      setEvents(data);
+      const querySnapshot = await getDocs(collection(db, "events"));
+      const eventList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setEvents(eventList);
     } catch (error) {
-      console.error("Failed to load events:", error);
+      console.error("Error loading events:", error);
     }
+
     setLoading(false);
   };
 
@@ -24,28 +33,45 @@ function Events() {
     loadEvents();
   }, []);
 
-  return (
-    <div className="page-section">
-      <h2 className="section-title text-pop">Our Events</h2>
+  // LOADING UI
+  if (loading) {
+    return (
+      <div className="page-section reveal">
+        <h2 className="section-title">Events</h2>
+        <p>Loading events...</p>
+      </div>
+    );
+  }
 
-      {loading ? (
-        <p className="fade-in">Loading events...</p>
-      ) : events.length === 0 ? (
-        <p className="fade-in">No events available</p>
-      ) : (
-        <div className="event-container reveal">
-          {events.map((ev) => (
-            <EventCard
-              key={ev.id}
-              id={ev.id}
-              name={ev.name}
-              price={ev.price}
-              image={ev.image}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+  // NO EVENTS UI
+  if (!events.length) {
+    return (
+      <div className="page-section reveal">
+        <h2 className="section-title">Events</h2>
+        <p>No events found.</p>
+      </div>
+    );
+  }
+
+  // EVENTS GRID
+  return (
+    <section className="events-wrapper reveal">
+      <h2 className="section-title" style={{ textAlign: "center", marginBottom: "20px" }}>
+        Events
+      </h2>
+
+      <div className="event-container">
+        {events.map((ev) => (
+          <EventCard
+            key={ev.id}
+            id={ev.id}
+            name={ev.name}
+            price={ev.price}
+            image={ev.image}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 

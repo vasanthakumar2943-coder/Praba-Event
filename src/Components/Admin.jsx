@@ -1,6 +1,17 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "../index.css";
+import { db } from "../firebase";
+
+import {
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
 
 function Admin() {
   const [events, setEvents] = useState([]);
@@ -10,134 +21,130 @@ function Admin() {
   const [lastDeleted, setLastDeleted] = useState(null);
   const [newEvent, setNewEvent] = useState({ name: "", price: "", image: "" });
   const [newImageFile, setNewImageFile] = useState(null);
+  const [confirmData, setConfirmData] = useState(null);
 
-  const loadData = () => {
-    fetch("http://localhost:8080/events")
-      .then((res) => res.json())
-      .then((data) => setEvents(data));
-
-    fetch("http://localhost:8080/bookings")
-      .then((res) => res.json())
-      .then((data) => setBookings(data));
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  // Convert image file to base64
   const fileToBase64 = (file, cb) => {
     const reader = new FileReader();
     reader.onloadend = () => cb(reader.result);
     reader.readAsDataURL(file);
   };
 
-  // Add new event
+  const loadData = async () => {
+    const eventSnap = await getDocs(collection(db, "events"));
+    const eventList = eventSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    setEvents(eventList);
+
+    const bookSnap = await getDocs(collection(db, "bookings"));
+    const bookList = bookSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    setBookings(bookList);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const handleAddEvent = () => {
     if (!newEvent.name || !newEvent.price) {
       toast.warn("Enter event name & price");
       return;
     }
 
-    const submitEvent = (imageBase64) => {
-      const payload = {
-        ...newEvent,
-        image: imageBase64 || newEvent.image,
-      };
+    const submitEvent = async (imageBase64) => {
+      try {
+        await addDoc(collection(db, "events"), {
+          name: newEvent.name,
+          price: newEvent.price,
+          image: imageBase64 || newEvent.image,
+        });
 
-      fetch("http://localhost:8080/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }).then(() => {
         toast.success("Event added ✔");
         setNewEvent({ name: "", price: "", image: "" });
         setNewImageFile(null);
         loadData();
-      });
+      } catch {
+        toast.error("Failed to add event");
+      }
     };
 
-    if (newImageFile) {
-      fileToBase64(newImageFile, submitEvent);
-    } else {
-      submitEvent(newEvent.image);
+    if (newImageFile) fileToBase64(newImageFile, submitEvent);
+    else submitEvent(newEvent.image);
+  };
+
+  const deleteEvent = async (ev) => {
+    const timeoutId = setTimeout(() => setLastDeleted(null), 10000);
+    setLastDeleted({ data: ev, timeoutId });
+
+    try {
+      await deleteDoc(doc(db, "events", ev.id));
+      toast.error("Event deleted. Undo available.");
+      setEvents((prev) => prev.filter((e) => e.id !== ev.id));
+    } catch {
+      toast.error("Delete failed");
     }
   };
 
-  // Delete event with undo
-  const deleteEvent = (ev) => {
-    const timeoutId = setTimeout(() => {
-      setLastDeleted(null);
-    }, 10000);
-
-    setLastDeleted({ data: ev, timeoutId });
-
-    fetch(`http://localhost:8080/events/${ev.id}`, {
-      method: "DELETE",
-    }).then(() => {
-      toast.error("Event deleted. Undo for 10s.");
-      setEvents((prev) => prev.filter((e) => e.id !== ev.id));
-    });
-  };
-
-  const undoDelete = () => {
+  const undoDelete = async () => {
     if (!lastDeleted) return;
     clearTimeout(lastDeleted.timeoutId);
 
-    fetch("http://localhost:8080/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(lastDeleted.data),
-    }).then(() => {
+    try {
+      await setDoc(doc(db, "events", lastDeleted.data.id), {
+        name: lastDeleted.data.name,
+        price: lastDeleted.data.price,
+        image: lastDeleted.data.image,
+      });
+
       toast.success("Delete undone ✔");
       setLastDeleted(null);
       loadData();
-    });
+    } catch {
+      toast.error("Restore failed");
+    }
   };
 
-  // Delete booking
-  const deleteBooking = (id) => {
-    fetch(`http://localhost:8080/bookings/${id}`, {
-      method: "DELETE",
-    }).then(() => {
+  const deleteBooking = async (id) => {
+    try {
+      await deleteDoc(doc(db, "bookings", id));
       toast.info("Booking removed");
       loadData();
-    });
+    } catch {
+      toast.error("Booking delete failed");
+    }
   };
 
-  // Update PIN
-  const updatePIN = () => {
+  const updatePIN = async () => {
     if (!newPin) {
       toast.warn("Enter new PIN");
       return;
     }
 
-    fetch("http://localhost:8080/admin", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pin: newPin }),
-    }).then(() => {
+    try {
+      await setDoc(doc(db, "settings", "admin"), { pin: newPin });
       toast.success("PIN updated 🔐");
       setNewPin("");
-    });
+    } catch {
+      toast.error("Failed to update PIN");
+    }
   };
 
-  // Save event edit
-  const saveEventEdit = () => {
+  const saveEventEdit = async () => {
     if (!editingEvent) return;
 
-    fetch(`http://localhost:8080/events/${editingEvent.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editingEvent),
-    }).then(() => {
+    try {
+      await updateDoc(doc(db, "events", editingEvent.id), {
+        name: editingEvent.name,
+        price: editingEvent.price,
+        image: editingEvent.image,
+      });
+
       toast.success("Event updated ✔");
       setEditingEvent(null);
       loadData();
-    });
+    } catch {
+      toast.error("Update failed");
+    }
   };
 
-  // Logout inside admin
   const logout = () => {
     localStorage.removeItem("admin-auth");
     toast.info("Logged Out");
@@ -145,151 +152,144 @@ function Admin() {
   };
 
   return (
-    <div className="page-section fade-in">
+    <div className="page-section reveal admin-wrapper">
+
+      {/* HEADER */}
       <h2 className="section-title">Admin Dashboard</h2>
 
-      <button
-        className="confirm-btn"
-        style={{ maxWidth: "160px", margin: "0 auto 20px" }}
-        onClick={logout}
-      >
-        Logout 🔓
+      <button className="confirm-btn logout-btn" onClick={logout}>
+        <i className="fi fi-rr-sign-out"></i> Logout
       </button>
 
-      {/* Add Event */}
-      <h3 className="section-title" style={{ marginTop: "10px" }}>Add Event</h3>
-      <div style={{ maxWidth: "400px", margin: "0 auto 20px auto" }}>
+      {/* ADD EVENT */}
+      <div className="glass-card admin-box">
+        <h3 className="admin-subtitle">Add Event</h3>
+
         <input
           type="text"
           className="form-control"
           placeholder="Event Name"
           value={newEvent.name}
-          onChange={(e) =>
-            setNewEvent({ ...newEvent, name: e.target.value })
-          }
+          onChange={(e) => setNewEvent({ ...newEvent, name: e.target.value })}
         />
-
         <input
           type="number"
           className="form-control"
           placeholder="Price ₹"
           value={newEvent.price}
-          onChange={(e) =>
-            setNewEvent({ ...newEvent, price: e.target.value })
-          }
-          style={{ marginTop: "8px" }}
+          onChange={(e) => setNewEvent({ ...newEvent, price: e.target.value })}
         />
 
         <input
           type="file"
           accept="image/*"
           className="form-control"
-          style={{ marginTop: "8px" }}
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) setNewImageFile(file);
-          }}
+          onChange={(e) => setNewImageFile(e.target.files[0])}
         />
 
-        <button
-          className="confirm-btn"
-          style={{ marginTop: "10px" }}
-          onClick={handleAddEvent}
-        >
+        <button className="confirm-btn add-btn" onClick={handleAddEvent}>
           ➕ Add Event
         </button>
       </div>
 
+      {/* FLOATING UNDO BUTTON (Right Side) */}
       {lastDeleted && (
-        <button
-          className="confirm-btn"
-          style={{ maxWidth: "200px", margin: "0 auto 20px", background: "orange" }}
-          onClick={undoDelete}
-        >
-          ⏪ Undo Delete (10s)
+        <button className="undo-btn" onClick={undoDelete}>
+          ⏪ Undo Delete
         </button>
       )}
 
-      {/* Events Table */}
-      <h3 className="section-title" style={{ marginTop: "20px" }}>Events</h3>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Event</th>
-            <th>Price (₹)</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {events.map((ev) => (
-            <tr key={ev.id}>
-              <td>
-                <img src={ev.image} alt={ev.name} width="70" height="45" />
-              </td>
-              <td>{ev.name}</td>
-              <td>{ev.price}</td>
-              <td>
-                <button
-                  className="confirm-btn"
-                  style={{ padding: "4px 10px" }}
-                  onClick={() => setEditingEvent({ ...ev })}
-                >
-                  🛠
-                </button>
-              </td>
-              <td>
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteEvent(ev)}
-                >
-                  🗑
-                </button>
-              </td>
+      {/* EVENT LIST */}
+      <div className="glass-card admin-table-wrap">
+        <h3 className="admin-subtitle">Events</h3>
+
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Event</th>
+              <th>Price</th>
+              <th>Edit</th>
+              <th>Del</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
 
-      {/* Bookings Table */}
-      <h3 className="section-title" style={{ marginTop: "30px" }}>Bookings</h3>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Event</th>
-            <th>Date</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {bookings.map((b) => (
-            <tr key={b.id}>
-              <td>{b.event}</td>
-              <td>{b.date}</td>
-              <td>{b.customerName}</td>
-              <td>{b.phone}</td>
-              <td>
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteBooking(b.id)}
-                >
-                  ❌
-                </button>
-              </td>
+          <tbody>
+            {events.map((ev) => (
+              <tr key={ev.id}>
+                <td>
+                  <img src={ev.image} width="60" height="40" className="table-img" />
+                </td>
+                <td>{ev.name}</td>
+                <td>₹{ev.price}</td>
+
+                <td>
+                  <button className="icon-btn" onClick={() => setEditingEvent({ ...ev })}>
+                    🛠
+                  </button>
+                </td>
+
+                <td>
+                  <button className="delete-btn" onClick={() => deleteEvent(ev)}>
+                    🗑
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* BOOKINGS */}
+      <div className="glass-card admin-table-wrap">
+        <h3 className="admin-subtitle">Bookings</h3>
+
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
 
-      {/* Security Settings */}
-      <h3 className="section-title" style={{ marginTop: "30px" }}>
-        Security Settings
-      </h3>
+          <tbody>
+            {bookings.map((b) => (
+              <tr key={b.id}>
+                <td>{b.event}</td>
+                <td>{b.date}</td>
+                <td>{b.customerName}</td>
+                <td>{b.phone}</td>
+                <td>
+                  {b.confirmed ? "✔ Confirmed" : "⏳ Pending"}
+                </td>
+                <td className="action-buttons">
+                  {!b.confirmed && (
+                    <button
+                      className="icon-btn confirm"
+                      onClick={() => setConfirmData(b)}
+                    >
+                      ✔
+                    </button>
+                  )}
 
-      <div style={{ maxWidth: "350px", margin: "0 auto" }}>
+                  <button className="delete-btn" onClick={() => deleteBooking(b.id)}>
+                    ❌
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* SECURITY SETTINGS */}
+      <div className="glass-card admin-box">
+        <h3 className="admin-subtitle">Security Settings</h3>
+
         <input
           type="password"
           className="form-control"
@@ -298,23 +298,16 @@ function Admin() {
           onChange={(e) => setNewPin(e.target.value)}
         />
 
-        <button
-          className="confirm-btn"
-          style={{ marginTop: "10px" }}
-          onClick={updatePIN}
-        >
+        <button className="confirm-btn" onClick={updatePIN}>
           Update PIN 🔐
         </button>
       </div>
 
-      {/* Edit Event Modal */}
+      {/* EDIT & CONFIRM POPUPS REMAIN SAME (just styled by CSS) */}
       {editingEvent && (
         <div className="modal-overlay">
-          <div className="modal-box fade-in">
-            <button
-              className="close-btn"
-              onClick={() => setEditingEvent(null)}
-            >
+          <div className="modal-box glass-box fade-in">
+            <button className="close-btn" onClick={() => setEditingEvent(null)}>
               ✖
             </button>
 
@@ -327,7 +320,6 @@ function Admin() {
               onChange={(e) =>
                 setEditingEvent({ ...editingEvent, name: e.target.value })
               }
-              style={{ marginTop: "10px" }}
             />
 
             <input
@@ -337,14 +329,12 @@ function Admin() {
               onChange={(e) =>
                 setEditingEvent({ ...editingEvent, price: e.target.value })
               }
-              style={{ marginTop: "10px" }}
             />
 
             <input
               type="file"
-              accept="image/*"
               className="form-control"
-              style={{ marginTop: "10px" }}
+              accept="image/*"
               onChange={(e) => {
                 const file = e.target.files[0];
                 if (file) {
@@ -355,16 +345,43 @@ function Admin() {
               }}
             />
 
-            <button
-              className="confirm-btn"
-              style={{ marginTop: "10px" }}
-              onClick={saveEventEdit}
-            >
+            <button className="confirm-btn" onClick={saveEventEdit}>
               Save ✔
             </button>
           </div>
         </div>
       )}
+
+      {confirmData && (
+        <div className="modal-overlay">
+          <div className="modal-box glass-box fade-in">
+            <button className="close-btn" onClick={() => setConfirmData(null)}>
+              ✖
+            </button>
+
+            <h3>Confirm Booking</h3>
+
+            <p>
+              <b>Event:</b> {confirmData.event}<br />
+              <b>Name:</b> {confirmData.customerName}<br />
+              <b>Date:</b> {confirmData.date}<br />
+              <b>Phone:</b> {confirmData.phone}
+            </p>
+
+            <button
+              className="confirm-btn"
+              onClick={() => {
+                let phone = confirmData.phone.replace(/\D/g, "");
+                if (phone.length === 10) phone = "91" + phone;
+                window.location.href = `tel:${phone}`;
+              }}
+            >
+              📞 Call User
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
