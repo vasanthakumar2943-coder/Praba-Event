@@ -3,9 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../index.css";
 
-import { db } from "../firebase";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
-
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -17,54 +14,51 @@ function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Theme
+  // Theme handling
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Login check
+  // Check login
   useEffect(() => {
     const auth = localStorage.getItem("admin-auth");
     setLoggedIn(auth === "true");
   }, []);
 
-  // Booking count
+  // Booking notification count
   useEffect(() => {
-    const loadBookings = async () => {
-      try {
-        const snap = await getDocs(collection(db, "bookings"));
-        setBookingCount(snap.size);
-      } catch {}
+    const fetchBookings = () => {
+      fetch("http://localhost:8080/bookings")
+        .then((res) => res.json())
+        .then((data) => setBookingCount(data.length))
+        .catch(() => {});
     };
-
-    loadBookings();
-    const id = setInterval(loadBookings, 10000);
+    fetchBookings();
+    const id = setInterval(fetchBookings, 10000);
     return () => clearInterval(id);
   }, [location.pathname]);
 
-  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
-  // Admin login
-  const handleAdminLogin = async () => {
-    try {
-      const ref = doc(db, "settings", "admin");
-      const snap = await getDoc(ref);
-
-      if (snap.exists()) {
-        const correctPin = snap.data().pin;
-
-        if (pin === correctPin) {
+  const handleAdminLogin = () => {
+    fetch("http://localhost:8080/admin")
+      .then((res) => res.json())
+      .then((data) => {
+        if (pin === data.pin) {
           localStorage.setItem("admin-auth", "true");
           setLoggedIn(true);
           toast.success("Welcome Admin 🔐");
           setShowLoginModal(false);
+          setPin("");
           navigate("/admin");
-        } else toast.error("Incorrect PIN ❌");
-      } else toast.error("Admin PIN not found ⚠️");
-    } catch {
-      toast.error("Login failed ❌");
-    }
+        } else {
+          toast.error("Incorrect PIN ❌");
+        }
+      })
+      .catch(() => toast.error("Server error"));
   };
 
   const handleLogout = () => {
@@ -85,10 +79,9 @@ function Navbar() {
 
   return (
     <>
-      <nav className="navbar glass-nav reveal">
+      <nav className="navbar">
         <div className="nav-logo">Praba Event's</div>
 
-        {/* HAMBURGER */}
         <div
           className={`hamburger ${menuOpen ? "active" : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -98,7 +91,6 @@ function Navbar() {
           <span></span>
         </div>
 
-        {/* MENU */}
         <ul className={`nav-links ${menuOpen ? "show" : ""}`}>
           {menuItems.map((item) => (
             <li key={item.link}>
@@ -114,33 +106,39 @@ function Navbar() {
             </li>
           ))}
 
-          {/* ADMIN DASHBOARD 🔔 */}
+          {/* Admin Dashboard bell with booking count */}
           {loggedIn && (
             <li>
               <Link
                 to="/admin"
                 className="nav-link notif-icon"
+                title="Admin Dashboard"
                 onClick={() => setMenuOpen(false)}
               >
-                <span className="icon-bell">🔔</span>
+                🔔
                 {bookingCount > 0 && (
-                  <span className="badge glass-badge">{bookingCount}</span>
+                  <span className="badge">{bookingCount}</span>
                 )}
               </Link>
             </li>
           )}
 
-          {/* THEME TOGGLE */}
+          {/* Theme toggle */}
           <li>
-            <button className="icon-btn glass-btn" onClick={toggleTheme}>
+            <button
+              className="icon-btn"
+              title={theme === "dark" ? "Light mode" : "Dark mode"}
+              onClick={toggleTheme}
+            >
               {theme === "dark" ? "🌞" : "🌙"}
             </button>
           </li>
 
-          {/* ADMIN LOGIN */}
+          {/* Admin login/logout icon */}
           <li>
             <button
-              className="icon-btn glass-btn"
+              className="icon-btn"
+              title={loggedIn ? "Logout" : "Admin Login"}
               onClick={() =>
                 loggedIn ? handleLogout() : setShowLoginModal(true)
               }
@@ -151,27 +149,28 @@ function Navbar() {
         </ul>
       </nav>
 
-      {/* LOGIN MODAL */}
+      {/* Admin Login Modal */}
       {showLoginModal && (
         <div className="modal-overlay">
-          <div className="modal-box glass-box fade-in">
+          <div className="modal-box fade-in">
             <button
               className="close-btn"
               onClick={() => setShowLoginModal(false)}
             >
               ✖
             </button>
-
             <h3>Admin Login</h3>
+
             <input
               type="password"
-              className="form-control"
               placeholder="Enter Admin PIN"
+              className="form-control"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
+              style={{ margin: "15px 0" }}
             />
 
-            <button className="confirm-btn glow" onClick={handleAdminLogin}>
+            <button className="confirm-btn" onClick={handleAdminLogin}>
               Login ✔
             </button>
           </div>
