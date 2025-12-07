@@ -518,3 +518,13 @@ button, a[role="button"]{ cursor: pointer; -webkit-tap-highlight-color: transpar
   - Ensure you use <h2 class="section-title"> for headings to get consistent styling
   - Calendar wrapper .calendar-glass-wrapper must contain the calendar component
 ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
