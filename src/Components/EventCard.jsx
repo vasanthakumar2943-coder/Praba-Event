@@ -15,7 +15,8 @@ function EventCard({ id, name, price, image }) {
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [loading, setLoading] = useState(true);
 
-  // Load booked dates from Firestore
+  const adminNumber = "91XXXXXXXXXX";
+
   useEffect(() => {
     const loadBookings = async () => {
       try {
@@ -29,7 +30,6 @@ function EventCard({ id, name, price, image }) {
       } catch (error) {
         console.error("Failed to load bookings:", error);
       }
-
       setLoading(false);
     };
 
@@ -39,6 +39,7 @@ function EventCard({ id, name, price, image }) {
   const disableDates = ({ date }) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
     if (date < today) return true;
 
     return bookedDates.some(
@@ -54,10 +55,15 @@ function EventCard({ id, name, price, image }) {
     setShowForm(true);
   };
 
-  // Save booking to Firestore
   const handleBooking = async () => {
     if (!customer.name || !customer.phone) {
       toast.warn("Enter your details!");
+      return;
+    }
+
+    const cleanPhone = customer.phone.replace(/\D/g, "");
+    if (cleanPhone.length !== 10) {
+      toast.warn("Enter a valid 10-digit WhatsApp number!");
       return;
     }
 
@@ -67,17 +73,27 @@ function EventCard({ id, name, price, image }) {
         event: name,
         date: selectedDate.toISOString().split("T")[0],
         customerName: customer.name,
-        phone: customer.phone,
+        phone: cleanPhone,
+        confirmed: false,
         timestamp: Date.now(),
       });
 
-      toast.success("Booking Confirmed 🎉");
+      toast.success("Booking Sent 🎉 Admin will confirm soon.");
 
-      // Reset states
+      const msg = `📩 New Booking Request\n\nEvent: ${name}\nDate: ${
+        selectedDate.toISOString().split("T")[0]
+      }\nName: ${customer.name}\nPhone: ${cleanPhone}\n\nPlease open Admin Panel to confirm.`;
+
+      window.open(
+        `https://wa.me/${adminNumber}?text=${encodeURIComponent(msg)}`,
+        "_blank"
+      );
+
       setShowModal(false);
       setShowForm(false);
       setCustomer({ name: "", phone: "" });
       setSelectedDate(null);
+
     } catch (error) {
       console.error("Booking error:", error);
       toast.error("Booking failed");
@@ -86,20 +102,30 @@ function EventCard({ id, name, price, image }) {
 
   return (
     <>
-      <div className="event-card">
-        <img src={image} alt={name} className="event-img" />
-        <div className="event-content">
-          <h3>{name}</h3>
-          <p className="event-price">₹ {price}</p>
-          <button className="book-btn" onClick={() => setShowModal(true)}>
-            Book Now
-          </button>
-        </div>
+      {/* EVENT CARD */}
+      <div className="event-card reveal zoom-in">
+        {loading ? (
+          <div className="shimmer"></div>
+        ) : (
+          <>
+            <img src={image} alt={name} className="event-img" />
+
+            <div className="event-content">
+              <h3>{name}</h3>
+              <p className="event-price">₹ {price}</p>
+
+              <button className="book-btn glow" onClick={() => setShowModal(true)}>
+                Book Now
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
+      {/* MODAL */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-box fade-in">
+        <div className="modal-overlay fade-in">
+          <div className="modal-box fade-in glass-box">
             <button
               className="close-btn"
               onClick={() => {
@@ -111,36 +137,41 @@ function EventCard({ id, name, price, image }) {
               ✖
             </button>
 
-            {/* Step 1: Select Date */}
+            {/* STEP 1 — GLASS CALENDAR */}
             {!showForm ? (
               <>
                 <h3>Select Date</h3>
-                {loading ? (
-                  <p>Loading calendar...</p>
-                ) : (
-                  <Calendar
-                    onClickDay={(d) => setSelectedDate(d)}
-                    tileDisabled={disableDates}
-                    tileClassName={({ date }) =>
-                      bookedDates.some(
-                        (b) => b.toDateString() === date.toDateString()
-                      )
-                        ? "booked-date"
-                        : selectedDate &&
-                          selectedDate.toDateString() === date.toDateString()
-                        ? "selected-date"
-                        : ""
-                    }
-                  />
-                )}
-                <button className="confirm-btn" onClick={handleContinue}>
+
+                <div className="calendar-glass-wrapper">
+                  {loading ? (
+                    <p>Loading calendar...</p>
+                  ) : (
+                    <Calendar
+                      onClickDay={(d) => setSelectedDate(d)}
+                      tileDisabled={disableDates}
+                      tileClassName={({ date }) =>
+                        bookedDates.some(
+                          (b) => b.toDateString() === date.toDateString()
+                        )
+                          ? "booked-date"
+                          : selectedDate &&
+                            selectedDate.toDateString() === date.toDateString()
+                          ? "selected-date"
+                          : ""
+                      }
+                    />
+                  )}
+                </div>
+
+                <button className="confirm-btn glow" onClick={handleContinue}>
                   Continue →
                 </button>
               </>
             ) : (
               <>
-                {/* Step 2: Enter Customer Info */}
+                {/* STEP 2 — USER FORM */}
                 <h3>Enter Your Details</h3>
+
                 <input
                   type="text"
                   className="form-control"
@@ -151,18 +182,27 @@ function EventCard({ id, name, price, image }) {
                   }
                   style={{ marginTop: "10px" }}
                 />
-                <input
-                  type="tel"
-                  className="form-control"
-                  placeholder="Phone Number"
-                  value={customer.phone}
-                  onChange={(e) =>
-                    setCustomer({ ...customer, phone: e.target.value })
-                  }
-                  style={{ marginTop: "10px" }}
-                />
+
+                <div className="phone-field">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                    width="26"
+                    height="26"
+                    alt="WhatsApp"
+                  />
+                  <input
+                    type="tel"
+                    className="form-control"
+                    placeholder="WhatsApp Number"
+                    value={customer.phone}
+                    onChange={(e) =>
+                      setCustomer({ ...customer, phone: e.target.value })
+                    }
+                  />
+                </div>
+
                 <button
-                  className="confirm-btn"
+                  className="confirm-btn glow"
                   style={{ marginTop: "10px" }}
                   onClick={handleBooking}
                 >

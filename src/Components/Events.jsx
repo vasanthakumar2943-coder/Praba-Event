@@ -1,70 +1,50 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import EventCard from "./EventCard.jsx";
+import "../index.css";
+import useReveal from "../hooks/useReveal";
 
 function Events() {
+  useReveal();
+
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // 🔥 Load events from Firebase Database
-  useEffect(() => {
-    async function loadEvents() {
-      try {
-        const res = await fetch(
-          "https://praba-events-default-rtdb.firebaseio.com/events.json"
-        );
-        const data = await res.json();
-
-        if (data) {
-          const formatted = Object.keys(data).map((id) => ({
-            id,
-            ...data[id],
-          }));
-          setEvents(formatted);
-        }
-      } catch (err) {
-        console.error("Error loading events:", err);
-      }
+  const loadEvents = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/events");
+      const data = await res.json();
+      setEvents(data);
+    } catch (error) {
+      console.error("Failed to load events:", error);
     }
+    setLoading(false);
+  };
 
+  useEffect(() => {
     loadEvents();
   }, []);
 
   return (
-    <div className="page-section fade-in">
-      
-      {/* PAGE TITLE */}
-      <h2 className="section-title">Our Events</h2>
-      <p className="section-sub">
-        Explore our premium event services and book your special day.
-      </p>
+    <div className="page-section">
+      <h2 className="section-title text-pop">Our Events</h2>
 
-      {/* EVENTS GRID */}
-      <div className="event-container">
-        {events.map((event) => (
-          <div className="event-card zoom-in" key={event.id}>
-            
-            <img src={event.image} alt={event.title} className="event-img" />
-
-            <div className="event-content">
-              <h3>{event.title}</h3>
-
-              <p className="event-price">₹ {event.price}</p>
-
-              <Link to="/booking" state={{ event }}>
-                <button className="book-btn glow">Book Now</button>
-              </Link>
-            </div>
-          </div>
-        ))}
-
-        {/* Show shimmer if no data yet */}
-        {events.length === 0 && (
-          <>
-            <div className="event-card shimmer"></div>
-            <div className="event-card shimmer"></div>
-            <div className="event-card shimmer"></div>
-          </>
-        )}
-      </div>
+      {loading ? (
+        <p className="fade-in">Loading events...</p>
+      ) : events.length === 0 ? (
+        <p className="fade-in">No events available</p>
+      ) : (
+        <div className="event-container reveal">
+          {events.map((ev) => (
+            <EventCard
+              key={ev.id}
+              id={ev.id}
+              name={ev.name}
+              price={ev.price}
+              image={ev.image}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
