@@ -55,7 +55,7 @@ function Events() {
 
   // EVENTS GRID
   return (
-    <section className="events-wrapper reveal">
+    <section className="events-wrapper reveal page-section fade-in">
       <h2 className="section-title" style={{ textAlign: "center", marginBottom: "20px" }}>
         Events
       </h2>

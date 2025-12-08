@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FaPhoneAlt, FaWhatsapp, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 
 function Contact() {
-
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -27,25 +26,19 @@ function Contact() {
       {/* CONTACT GRID */}
       <div className="contact-grid mt-24">
 
-        {/* 1️⃣ PHONE */}
+        {/* PHONE */}
         <div className="contact-card zoom-in">
           <FaPhoneAlt size={28} color="#00eaff" style={{ marginBottom: "10px" }} />
-          <h3 style={{ marginBottom: "6px" }}>Call Us</h3>
-
+          <h3>Call Us</h3>
           <p className="contact-info">+91 98765 43210</p>
-
-          <a href="tel:+919876543210" className="contact-btn">
-            Call Now
-          </a>
+          <a href="tel:+919876543210" className="contact-btn">Call Now</a>
         </div>
 
-        {/* 2️⃣ WHATSAPP */}
+        {/* WHATSAPP */}
         <div className="contact-card zoom-in">
           <FaWhatsapp size={32} color="#25D366" style={{ marginBottom: "10px" }} />
-          <h3 style={{ marginBottom: "6px" }}>Chat on WhatsApp</h3>
-
+          <h3>Chat on WhatsApp</h3>
           <p className="contact-info">Available 24/7</p>
-
           <a
             href="https://wa.me/919876543210"
             target="_blank"
@@ -56,43 +49,33 @@ function Contact() {
           </a>
         </div>
 
-        {/* 3️⃣ EMAIL */}
+        {/* EMAIL */}
         <div className="contact-card zoom-in">
           <FaEnvelope size={32} color="#00eaff" style={{ marginBottom: "10px" }} />
-          <h3 style={{ marginBottom: "6px" }}>Email</h3>
-
+          <h3>Email</h3>
           <p className="contact-info">contact@prabaevents.com</p>
-
           <a href="mailto:contact@prabaevents.com" className="contact-btn">
             Send Email
           </a>
         </div>
 
-        {/* 4️⃣ LOCATION */}
+        {/* LOCATION */}
         <div className="contact-card zoom-in">
           <FaMapMarkerAlt size={32} color="#ff4d4d" style={{ marginBottom: "10px" }} />
-          <h3 style={{ marginBottom: "6px" }}>Location</h3>
-
+          <h3>Location</h3>
           <p className="contact-info">Coimbatore, Tamil Nadu</p>
-
-          <a href="#map" className="contact-btn">
-            View Map
-          </a>
+          <a href="#" className="contact-btn">View Location</a>
         </div>
-
       </div>
 
       {/* CONTACT FORM */}
       <form className="contact-form slide-up" onSubmit={handleSubmit}>
-
         <input
           type="text"
           className="form-input"
           placeholder="Your Name"
           value={formData.name}
-          onChange={(e) =>
-            setFormData({ ...formData, name: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
         />
 
@@ -101,39 +84,23 @@ function Contact() {
           className="form-input"
           placeholder="Phone Number"
           value={formData.phone}
-          onChange={(e) =>
-            setFormData({ ...formData, phone: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           required
         />
 
         <textarea
-          className="form-textarea"
+          className="form-input"
           placeholder="Your Message"
+          rows="4"
           value={formData.message}
-          onChange={(e) =>
-            setFormData({ ...formData, message: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
           required
         />
 
-        <button className="contact-btn glow" type="submit">
+        <button className="btn glow" type="submit" style={{ marginTop: "16px" }}>
           Send Message
         </button>
       </form>
-
-      {/* MAP */}
-      <div id="map" className="map-container mt-24">
-        <iframe
-          title="map"
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          loading="lazy"
-          allowFullScreen
-          src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15674.456!2d76.967!3d11.001!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba857faaa...">
-        </iframe>
-      </div>
 
     </div>
   );

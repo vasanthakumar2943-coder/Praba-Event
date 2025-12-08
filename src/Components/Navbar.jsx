@@ -85,7 +85,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className="navbar glass-nav reveal">
+      <nav className="glass-nav navbar reveal">
         <div className="nav-logo">Praba Event's</div>
 
         {/* HAMBURGER */}

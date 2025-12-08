@@ -1,99 +1,112 @@
-import React from "react";
-import { FaInstagram, FaWhatsapp, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Footer() {
+  // Scroll page to top on quick link click
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Footer fade-in animation
+  useEffect(() => {
+    const footer = document.querySelector(".footer-animate");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) footer.classList.add("show");
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(footer);
+  }, []);
+
   return (
-    <footer className="footer fade-in">
+    <footer className="footer glass-footer footer-animate">
       <div className="footer-content">
 
-        {/* Brand */}
+        {/* BRAND */}
         <div>
-          <h2 className="footer-logo">Praba Event's</h2>
-          <p style={{ opacity: 0.85 }}>
-            Creating unforgettable moments with love, passion, and perfection.
+          <h3 className="footer-logo">Praba Event's</h3>
+          <p>
+            Crafting unforgettable experiences with elegance, passion, and perfection.
           </p>
 
-          <div className="footer-social" style={{ marginTop: "14px" }}>
+          {/* SOCIAL ICONS */}
+          <div className="footer-social">
+
+            {/* Instagram */}
             <a
-              href="https://instagram.com"
+              href="https://instagram.com/yourusername"
               target="_blank"
               rel="noopener noreferrer"
-              className="footer-icon"
             >
-              <FaInstagram />
+              <i className="fa-brands fa-instagram"></i>
             </a>
 
+            {/* WhatsApp */}
             <a
               href="https://wa.me/919876543210"
               target="_blank"
               rel="noopener noreferrer"
-              className="footer-icon"
             >
-              <FaWhatsapp />
+              <i className="fa-brands fa-whatsapp"></i>
             </a>
 
-            <a href="tel:+919876543210" className="footer-icon">
-              <FaPhoneAlt />
+            {/* Facebook */}
+            <a
+              href="https://facebook.com/yourusername"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i className="fa-brands fa-facebook"></i>
             </a>
+
           </div>
         </div>
 
-        {/* Quick Links */}
+        {/* QUICK LINKS */}
         <div>
-          <h3 className="footer-heading">Quick Links</h3>
+          <h4>Quick Links</h4>
           <ul className="footer-links">
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/events">Events</Link></li>
-            <li><Link to="/services">Services</Link></li>
-            <li><Link to="/projects">Projects</Link></li>
-            <li><Link to="/contact">Contact</Link></li>
+            <li><Link to="/" onClick={scrollTop}>Home</Link></li>
+            <li><Link to="/events" onClick={scrollTop}>Events</Link></li>
+            <li><Link to="/services" onClick={scrollTop}>Services</Link></li>
+            <li><Link to="/projects" onClick={scrollTop}>Projects</Link></li>
+            <li><Link to="/contact" onClick={scrollTop}>Contact</Link></li>
           </ul>
         </div>
 
-        {/* Contact Info */}
+        {/* CONTACT INFO */}
         <div>
-          <h3 className="footer-heading">Contact Us</h3>
+          <h4>Contact Us</h4>
 
-          <p className="footer-links" style={{ marginBottom: "10px" }}>
-            <FaPhoneAlt style={{ marginRight: 8 }} /> +91 98765 43210
-          </p>
-
-          <p className="footer-links" style={{ marginBottom: "10px" }}>
-            <FaEnvelope style={{ marginRight: 8 }} /> contact@prabaevents.com
-          </p>
-
-          <p className="footer-links" style={{ marginBottom: "10px" }}>
-            <FaMapMarkerAlt style={{ marginRight: 8 }} /> Coimbatore, Tamil Nadu
-          </p>
+          <p><i className="fa-solid fa-phone"></i> &nbsp; +91 98765 43210</p>
+          <p><i className="fa-solid fa-envelope"></i> &nbsp; contact@prabaevents.com</p>
+          <p><i className="fa-solid fa-location-dot"></i> &nbsp; Coimbatore, Tamil Nadu</p>
         </div>
 
-        {/* Newsletter / Stay Connected */}
+        {/* SUBSCRIBE SECTION */}
         <div>
-          <h3 className="footer-heading">Stay Updated</h3>
-
-          <p style={{ opacity: 0.85 }}>
-            Get updates on new events, offers & packages.
-          </p>
+          <h4>Stay Connected</h4>
+          <p>Sign up to receive updates on new events, offers, and exclusive packages.</p>
 
           <input
             type="email"
             placeholder="Enter your email"
-            className="form-input"
-            style={{ marginTop: "10px" }}
+            className="footer-input"
           />
 
-          <button className="contact-btn glow" style={{ marginTop: "10px" }}>
-            Subscribe
+          <button className="btn glow footer-btn">
+            Send
           </button>
         </div>
 
       </div>
 
-      {/* Footer Bottom */}
+      {/* BOTTOM BAR */}
       <div className="footer-bottom">
-        © {new Date().getFullYear()} Praba Event’s. All rights reserved.
+        © 2025 Praba Event’s. All rights reserved.
       </div>
+
     </footer>
   );
 }

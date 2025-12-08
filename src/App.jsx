@@ -8,15 +8,17 @@ import About from "./Components/About.jsx";
 import Contact from "./Components/Contact.jsx";
 import Services from "./Components/Services.jsx";
 import Projects from "./Components/Projects.jsx";
-import Events from "./Components/Events.jsx";   // PAGE (list)
+import Events from "./Components/Events.jsx";   
 import Admin from "./Components/Admin.jsx";
 import Footer from "./Components/Footer.jsx";
 
+// ✅ ADD THIS IMPORT
+import BookingHistory from "./Components/BookingHistory.jsx";
 
 
 function ProtectedRoute({ children }) {
- const auth = localStorage.getItem("admin-auth") === "true";
-return auth ? children : <Navigate to="/" replace />;
+  const auth = localStorage.getItem("admin-auth") === "true";
+  return auth ? children : <Navigate to="/" replace />;
 }
 
 function App() {
@@ -32,6 +34,7 @@ function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/bookinghistory" element={<BookingHistory />} />
 
         <Route
           path="/admin"
