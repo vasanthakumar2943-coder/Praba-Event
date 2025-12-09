@@ -31,7 +31,7 @@ function Contact() {
           <FaPhoneAlt size={28} color="#00eaff" style={{ marginBottom: "10px" }} />
           <h3>Call Us</h3>
           <p className="contact-info">+91 98765 43210</p>
-          <a href="tel:+919876543210" className="contact-btn">Call Now</a>
+          <a href="tel:+919876543210" className="btn glow">Call Now</a>
         </div>
 
         {/* WHATSAPP */}
@@ -43,7 +43,7 @@ function Contact() {
             href="https://wa.me/919876543210"
             target="_blank"
             rel="noopener noreferrer"
-            className="contact-btn"
+            className="btn glow"
           >
             Message Now
           </a>
@@ -54,7 +54,7 @@ function Contact() {
           <FaEnvelope size={32} color="#00eaff" style={{ marginBottom: "10px" }} />
           <h3>Email</h3>
           <p className="contact-info">contact@prabaevents.com</p>
-          <a href="mailto:contact@prabaevents.com" className="contact-btn">
+          <a href="mailto:contact@prabaevents.com" className="btn glow">
             Send Email
           </a>
         </div>
@@ -64,7 +64,7 @@ function Contact() {
           <FaMapMarkerAlt size={32} color="#ff4d4d" style={{ marginBottom: "10px" }} />
           <h3>Location</h3>
           <p className="contact-info">Coimbatore, Tamil Nadu</p>
-          <a href="#" className="contact-btn">View Location</a>
+          <a href="#" className="btn glow">View Location</a>
         </div>
       </div>
 

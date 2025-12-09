@@ -11,10 +11,7 @@ import Projects from "./Components/Projects.jsx";
 import Events from "./Components/Events.jsx";   
 import Admin from "./Components/Admin.jsx";
 import Footer from "./Components/Footer.jsx";
-
-// ✅ ADD THIS IMPORT
 import BookingHistory from "./Components/BookingHistory.jsx";
-
 
 function ProtectedRoute({ children }) {
   const auth = localStorage.getItem("admin-auth") === "true";
@@ -35,7 +32,6 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/bookinghistory" element={<BookingHistory />} />
-
         <Route
           path="/admin"
           element={

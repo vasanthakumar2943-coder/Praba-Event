@@ -12,9 +12,7 @@ html {
 }
 body {
   transition: background 0.3s ease, color 0.3s ease;
-  overflow-x: hidden !important;
-  overflow-y: auto !important; /* allow vertical scrolling (sticky requires this) */
-  transition: background 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
 }
 
 /* Theme variables */
@@ -28,7 +26,6 @@ body {
 body[data-theme="dark"] {
   background: radial-gradient(circle at top, #111 0%, #000 60%);
   color: #e6ffff;
-  min-height: 200vh;
 }
 body[data-theme="light"] {
   background: #525050;
@@ -64,15 +61,17 @@ img {
 /* ======================================================
   2. NAVBAR (responsive)
 ====================================================== */
-nav, .navbar, .glass-nav {
-  position: sticky !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  z-index: 99999 !important;
-  background: rgba(0,0,0,0.45) !important;
-  backdrop-filter: blur(10px) !important;
+.glass-nav {
+  width: 100%;
+  height: 66px;
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 2000;
+  animation: fadeIn 0.6s ease;
 }
 .nav-logo {
   font-size: 1.7rem;
@@ -167,7 +166,7 @@ nav, .navbar, .glass-nav {
   padding: 20px;
   text-align: center;
   min-height: auto;
-  margin-top: 20px;
+  margin-top: 70px;
 }
 .section-title {
   color: var(--theme-color);
@@ -194,7 +193,6 @@ nav, .navbar, .glass-nav {
   margin-top: 70px;
   padding: 20px;
   text-align: center;
-  padding-bottom: 200px;
 }
 .hero h1 {
   font-size: 2.4rem;
@@ -230,7 +228,7 @@ nav, .navbar, .glass-nav {
   box-shadow: 0 0 0 rgba(0, 234, 255, 0);
 }
 .glow:hover {
-  /* box-shadow: 0 0 18px rgba(0, 234, 255, 0.5); */
+  box-shadow: 0 0 18px rgba(0, 234, 255, 0.5);
 }
 
 /* small-screen hero */
@@ -244,46 +242,43 @@ nav, .navbar, .glass-nav {
 }
 
 /* ======================================================
-  5. FLIPKART-STYLE SLIDER (flip-slider-track etc.)
+  5. HERO SLIDER (updated draggable version)
 ====================================================== */
 .flip-section {
   margin-top: 40px;
   text-align: center;
 }
+
 .flip-slider-container {
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: visible !important;
+  overflow: hidden;
   position: relative;
-  padding: 20px 0;
+  padding: 0;
 }
+
 .flip-slider-track {
   display: flex;
-  align-items: center;
-  gap: 20px;
-  padding-left: 10px;
   transition: transform 0.6s ease;
   will-change: transform;
 }
+
 .flip-card {
-  min-width: 300px;
-  height: 180px;
+  min-width: 100%;
+  height: 240px;
   border-radius: 14px;
   background: #000;
-  cursor: pointer;
-  perspective: 1000px;
+  cursor: grab;
   position: relative;
   overflow: hidden;
 }
+
 .flip-inner {
   width: 100%;
   height: 100%;
   transition: transform 0.6s ease;
   transform-style: preserve-3d;
 }
-.flip-card:hover .flip-inner {
-  transform: rotateY(180deg);
-}
+
 .flip-front,
 .flip-back {
   position: absolute;
@@ -293,11 +288,16 @@ nav, .navbar, .glass-nav {
   backface-visibility: hidden;
   overflow: hidden;
 }
-.flip-front img {
+
+/* front image */
+.flip-front img,
+.slider-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
+/* back content */
 .flip-back {
   background: linear-gradient(135deg, #00242e, #004455);
   transform: rotateY(180deg);
@@ -308,30 +308,40 @@ nav, .navbar, .glass-nav {
   color: white;
 }
 
-/* edge gradients */
-.flip-slider-container::before,
-.flip-slider-container::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 90px;
-  height: 100%;
-  z-index: 5;
-}
-.flip-slider-container::before {
-  left: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.8), transparent);
-}
-.flip-slider-container::after {
-  right: 0;
-  background: linear-gradient(-90deg, rgba(0, 0, 0, 0.8), transparent);
+/* hover flip on desktop */
+@media (min-width: 769px) {
+  .flip-card:hover .flip-inner {
+    transform: rotateY(180deg);
+  }
 }
 
-/* small slider adjustments */
-@media (max-width: 480px) {
+/* slider dots */
+.slider-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  gap: 6px;
+}
+
+.slider-dots .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #555;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.slider-dots .dot.active {
+  background: var(--theme-color);
+  transform: scale(1.3);
+}
+
+/* mobile height tweak */
+@media (max-width: 600px) {
   .flip-card {
-    min-width: 260px;
-    height: 170px;
+    height: 220px;
+    min-width: 100%;
   }
 }
 
@@ -391,8 +401,163 @@ nav, .navbar, .glass-nav {
 .event-card:hover,
 .service-card:hover,
 .project-card:hover {
-  /* box-shadow: 0 0 18px rgba(0, 234, 255, 0.45); */
+  box-shadow: 0 0 18px rgba(0, 234, 255, 0.45);
   border-color: rgba(0, 234, 255, 0.6);
+}
+
+/* EXTRA: overlay style for Event Highlights */
+.event-card-overlay {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.event-img-wrap {
+  position: relative;
+  height: 260px;
+}
+
+.event-img-wrap .event-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), transparent);
+  color: #fff;
+  text-align: left;
+}
+
+.event-desc {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+  .event-img-wrap {
+    height: 230px;
+  }
+}
+
+@media (max-width: 600px) {
+  .event-img-wrap {
+    height: 220px;
+  }
+}
+/* ===== Calendar Glass Theme Fix ===== */
+.react-calendar {
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 234, 255, 0.3) !important;
+  border-radius: 16px;
+  color: #fff !important;
+  padding: 10px;
+}
+
+.react-calendar__navigation button {
+  background: transparent !important;
+  color: var(--theme-color) !important;
+  font-weight: bold;
+  font-size: 18px;
+}
+.react-calendar__navigation button:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 10px var(--theme-color);
+}
+
+.react-calendar__month-view__weekdays {
+  color: #aaa !important;
+  font-weight: 600;
+}
+
+.react-calendar__tile {
+  background: transparent !important;
+  color: #fff !important;
+  border-radius: 8px;
+  transition: 0.25s ease;
+}
+
+.react-calendar__tile:hover {
+  background: rgba(0, 234, 255, 0.15) !important;
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.3);
+}
+
+.react-calendar__tile--active {
+  background: var(--theme-color) !important;
+  color: #000 !important;
+  font-weight: bold;
+  box-shadow: 0 0 10px var(--theme-color);
+}
+
+.react-calendar__tile--now {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid var(--theme-color);
+  color: #fff !important;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #ff4d4d !important;
+}
+
+
+/* ===== DESKTOP POPUP (CENTER MODAL) ===== */
+@media (min-width: 481px) {
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 9000;
+  }
+
+  .modal-box {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90%;
+    max-width: 450px;
+    background: rgba(0,0,0,0.85);
+    border-radius: 18px;
+    z-index: 9999;
+    padding: 20px;
+  }
+}
+
+
+/* ===== MOBILE POPUP (INSIDE CARD) ===== */
+@media (max-width: 480px) {
+  .modal-overlay {
+    display: none !important; /* No overlay */
+  }
+
+  .modal-box {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    margin-top: 10px;
+    padding: 15px;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.85);
+  }
+
+  .close-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--theme-color);
+    color: #000;
+    padding: 6px 10px;
+    border-radius: 50%;
+    font-size: 14px;
+  }
 }
 
 /* End of Part 1 */
@@ -498,31 +663,42 @@ textarea.form-input {
   padding: 20px;
   margin-top: 30px;
 }
+
+/* Masonry layout using columns */
 .gallery-masonry {
-  columns: 2;
-  column-gap: 12px;
+  column-count: 3;
+  column-gap: 10px;
   width: 100%;
 }
-.masonry-img {
+
+.gallery-item-wrapper {
+  margin-bottom: 10px;
+  break-inside: avoid;
+  position: relative;
+}
+
+.masonry-img,
+.gallery-item-wrapper video {
   width: 100%;
   border-radius: 10px;
-  margin-bottom: 12px;
+  display: block;
   transition: 0.3s;
+  animation: fadeIn 0.5s ease;
 }
-.masonry-img:hover {
+
+.masonry-img:hover,
+.gallery-item-wrapper video:hover {
   transform: scale(1.03);
 }
-.masonry-img.tall {
-  height: 300px;
-  object-fit: cover;
-}
-.masonry-img.wide {
-  height: 170px;
-  object-fit: cover;
+
+@media (max-width: 900px) {
+  .gallery-masonry {
+    column-count: 2;
+  }
 }
 @media (max-width: 600px) {
   .gallery-masonry {
-    columns: 1;
+    column-count: 1;
   }
 }
 
@@ -911,12 +1087,29 @@ textarea.form-input {
   text-align: center;
   font-size: 0.95rem;
 }
+
+/* preview images & videos in tables */
 .table-img {
   width: 70px;
-  height: 45px;
+  height: 50px;
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.admin-table-wrap video.table-img {
+  width: 80px;
+  height: 60px;
+  border-radius: 6px;
+}
+
+/* upload progress text */
+.upload-progress {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 6px;
+  color: var(--theme-color);
 }
 
 /* Action buttons in table */
@@ -1096,7 +1289,7 @@ textarea.form-input {
 }
 .footer-btn:hover {
   transform: translateY(-3px);
-  /* box-shadow: 0 0 18px rgba(0, 234, 255, 0.5); */
+  box-shadow: 0 0 18px rgba(0, 234, 255, 0.5);
 }
 
 .footer-bottom {

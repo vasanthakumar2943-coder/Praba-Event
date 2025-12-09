@@ -38,33 +38,43 @@ function Projects() {
   ];
 
   return (
-    <div>
+    <main>
 
       {/* ⭐ PROJECTS HEADER */}
-      <section className="projects-hero reveal" style={{ textAlign: "center", paddingTop: "30px" }}>
-        <h1 className="section-title">Our Event Projects</h1>
+      <section
+        className="projects-hero reveal page-section"
+        style={{ textAlign: "center", paddingTop: "30px" }}
+        aria-labelledby="projects-heading"
+      >
+        <h1 className="section-title" id="projects-heading">
+          Our Event Projects
+        </h1>
         <p className="projects-subtitle">
           A showcase of beautifully designed and professionally executed events.
         </p>
       </section>
 
       {/* ⭐ PROJECTS GRID */}
-      <section className="projects-section reveal">
+      <section className="projects-section reveal" aria-label="Completed Event Projects">
         <div className="projects-grid">
-          {projects.map((p, i) => (
-            <div className="project-card" key={i}>
-              <img src={p.img} alt={p.title} className="project-img" />
-
+          {projects.map((project, index) => (
+            <article className="project-card" key={index}>
+              <img
+                src={project.img}
+                alt={project.title}
+                className="project-img"
+                loading="lazy"
+              />
               <div className="project-info">
-                <h3 className="project-title">{p.title}</h3>
-                <p className="project-desc">{p.desc}</p>
+                <h3 className="project-title">{project.title}</h3>
+                <p className="project-desc">{project.desc}</p>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </section>
 
-    </div>
+    </main>
   );
 }
 

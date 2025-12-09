@@ -20,12 +20,10 @@ function Events() {
         id: doc.id,
         ...doc.data(),
       }));
-
       setEvents(eventList);
     } catch (error) {
       console.error("Error loading events:", error);
     }
-
     setLoading(false);
   };
 
@@ -56,7 +54,10 @@ function Events() {
   // EVENTS GRID
   return (
     <section className="events-wrapper reveal page-section fade-in">
-      <h2 className="section-title" style={{ textAlign: "center", marginBottom: "20px" }}>
+      <h2
+        className="section-title"
+        style={{ textAlign: "center", marginBottom: "20px" }}
+      >
         Events
       </h2>
 

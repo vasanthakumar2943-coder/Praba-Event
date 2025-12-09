@@ -39,7 +39,6 @@ function EventCard({ id, name, price, image }) {
   const disableDates = ({ date }) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     if (date < today) return true;
 
     return bookedDates.some(
@@ -89,6 +88,7 @@ function EventCard({ id, name, price, image }) {
         "_blank"
       );
 
+      // CLOSE MODAL (no scroll lock)
       setShowModal(false);
       setShowForm(false);
       setCustomer({ name: "", phone: "" });
@@ -98,6 +98,12 @@ function EventCard({ id, name, price, image }) {
       console.error("Booking error:", error);
       toast.error("Booking failed");
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setShowForm(false);
+    setSelectedDate(null);
   };
 
   return (
@@ -114,7 +120,10 @@ function EventCard({ id, name, price, image }) {
               <h3>{name}</h3>
               <p className="event-price">₹ {price}</p>
 
-              <button className="book-btn glow" onClick={() => setShowModal(true)}>
+              <button
+                className="book-btn glow"
+                onClick={() => setShowModal(true)} // ⬅ no overflow change
+              >
                 Book Now
               </button>
             </div>
@@ -124,24 +133,17 @@ function EventCard({ id, name, price, image }) {
 
       {/* MODAL */}
       {showModal && (
-        <div className="modal-overlay fade-in">
+        <>
+          <div className="modal-overlay fade-in" onClick={handleCloseModal}></div>
+
           <div className="modal-box fade-in glass-box">
-            <button
-              className="close-btn"
-              onClick={() => {
-                setShowModal(false);
-                setShowForm(false);
-                setSelectedDate(null);
-              }}
-            >
+            <button className="close-btn" onClick={handleCloseModal}>
               ✖
             </button>
 
-            {/* STEP 1 — GLASS CALENDAR */}
             {!showForm ? (
               <>
                 <h3>Select Date</h3>
-
                 <div className="calendar-glass-wrapper">
                   {loading ? (
                     <p>Loading calendar...</p>
@@ -162,14 +164,12 @@ function EventCard({ id, name, price, image }) {
                     />
                   )}
                 </div>
-
                 <button className="confirm-btn glow" onClick={handleContinue}>
                   Continue →
                 </button>
               </>
             ) : (
               <>
-                {/* STEP 2 — USER FORM */}
                 <h3>Enter Your Details</h3>
 
                 <input
@@ -178,11 +178,8 @@ function EventCard({ id, name, price, image }) {
                   placeholder="Your Name"
                   value={customer.name}
                   onChange={(e) =>
-                    setCustomer({ ...customer, name: e.target.value })
-                  }
-                  style={{ marginTop: "10px" }}
+                    setCustomer({ ...customer, name: e.target.value })}
                 />
-
                 <div className="phone-field">
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
@@ -196,14 +193,12 @@ function EventCard({ id, name, price, image }) {
                     placeholder="WhatsApp Number"
                     value={customer.phone}
                     onChange={(e) =>
-                      setCustomer({ ...customer, phone: e.target.value })
-                    }
+                      setCustomer({ ...customer, phone: e.target.value })}
                   />
                 </div>
 
                 <button
                   className="confirm-btn glow"
-                  style={{ marginTop: "10px" }}
                   onClick={handleBooking}
                 >
                   Confirm Booking ✔
@@ -211,7 +206,7 @@ function EventCard({ id, name, price, image }) {
               </>
             )}
           </div>
-        </div>
+        </>
       )}
     </>
   );

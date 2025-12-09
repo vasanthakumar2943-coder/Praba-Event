@@ -38,30 +38,38 @@ function Services() {
   ];
 
   return (
-    <div>
+    <main>
 
       {/* ⭐ SERVICES HEADER */}
-      <section className="services-hero reveal" style={{ textAlign: "center", paddingTop: "30px" }}>
-        <h1 className="section-title">Our Services</h1>
+      <section
+        className="services-hero reveal page-section"
+        style={{ textAlign: "center", paddingTop: "30px" }}
+        aria-labelledby="services-heading"
+      >
+        <h1 className="section-title" id="services-heading">
+          Our Services
+        </h1>
         <p className="services-subtitle">
           Premium event solutions crafted to make your celebrations extraordinary.
         </p>
       </section>
 
       {/* ⭐ SERVICES GRID */}
-      <section className="services-section reveal">
+      <section className="services-section reveal" aria-label="Service Categories">
         <div className="services-grid">
-          {services.map((s, i) => (
-            <div className="service-card" key={i}>
-              <div className="service-icon">{s.icon}</div>
-              <h3 className="service-title">{s.title}</h3>
-              <p className="service-desc">{s.desc}</p>
-            </div>
+          {services.map((service, index) => (
+            <article className="service-card" key={index}>
+              <div className="service-icon" aria-hidden="true">
+                {service.icon}
+              </div>
+              <h3 className="service-title">{service.title}</h3>
+              <p className="service-desc">{service.desc}</p>
+            </article>
           ))}
         </div>
       </section>
 
-    </div>
+    </main>
   );
 }
 
