@@ -35,7 +35,7 @@ function Footer() {
 
             {/* Instagram */}
             <a
-              href="https://instagram.com/yourusername"
+              href="https://instagram.com/praba_events_paranji"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -44,7 +44,7 @@ function Footer() {
 
             {/* WhatsApp */}
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/917094325920"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -53,7 +53,7 @@ function Footer() {
 
             {/* Facebook */}
             <a
-              href="https://facebook.com/yourusername"
+              href="https://facebook.com/praba.raman.58"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -79,9 +79,9 @@ function Footer() {
         <div>
           <h4>Contact Us</h4>
 
-          <p><i className="fa-solid fa-phone"></i> &nbsp; +91 98765 43210</p>
+          <p><i className="fa-solid fa-phone"></i> &nbsp; +91 70943 25902</p>
           <p><i className="fa-solid fa-envelope"></i> &nbsp; contact@prabaevents.com</p>
-          <p><i className="fa-solid fa-location-dot"></i> &nbsp; Coimbatore, Tamil Nadu</p>
+          <p><i className="fa-solid fa-location-dot"></i> &nbsp; Paranji, Arakkonam, Tamil Nadu</p>
         </div>
 
         {/* SUBSCRIBE SECTION */}

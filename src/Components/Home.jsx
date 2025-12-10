@@ -6,43 +6,50 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { toast } from "react-toastify";
 
-/* ============================
-   HIGHLIGHT BOOKING MODAL
-   (same flow as EventCard)
-============================ */
-function HighlightBookingModal({ highlight, onClose }) {
+/* ============================================================
+   INLINE POPUP FOR HIGHLIGHT (CENTER FLOAT OVER IMAGE)
+============================================================ */
+function InlineHighlightPopup({ highlight, onClose }) {
   const eventName = highlight?.event || highlight?.title || "Event";
+  const eventId = highlight?.id || eventName;
+
   const [bookedDates, setBookedDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [loading, setLoading] = useState(true);
 
-  const adminNumber = "91XXXXXXXXXX"; // same as EventCard
+  const adminNumber = "91XXXXXXXXXX";
 
-  // Load existing bookings for this event (by name)
+  /* LOAD BOOKINGS */
   useEffect(() => {
-    if (!highlight) return;
+    let mounted = true;
 
-    const loadBookings = async () => {
+    async function loadBookings() {
       try {
-        const snapshot = await getDocs(collection(db, "bookings"));
-        const filtered = snapshot.docs
-          .map((doc) => doc.data())
-          .filter((b) => b.event === eventName)
+        const snap = await getDocs(collection(db, "bookings"));
+        const list = snap.docs
+          .map((d) => d.data())
+          .filter((b) =>
+            b.eventId
+              ? b.eventId === eventId
+              : b.event === eventName
+          )
           .map((b) => new Date(b.date));
 
-        setBookedDates(filtered);
+        if (mounted) setBookedDates(list);
       } catch (err) {
-        console.error("Failed to load bookings:", err);
+        console.error("Booking load error:", err);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
-    };
+    }
 
     loadBookings();
-  }, [highlight, eventName]);
+    return () => (mounted = false);
+  }, [eventId, eventName]);
 
+  /* DISABLE DATES */
   const disableDates = ({ date }) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -54,6 +61,7 @@ function HighlightBookingModal({ highlight, onClose }) {
     );
   };
 
+  /* CONTINUE TO FORM */
   const handleContinue = () => {
     if (!selectedDate) {
       toast.warn("Please select a date!");
@@ -62,13 +70,7 @@ function HighlightBookingModal({ highlight, onClose }) {
     setShowForm(true);
   };
 
-  const handleClose = () => {
-    setShowForm(false);
-    setSelectedDate(null);
-    setCustomer({ name: "", phone: "" });
-    onClose();
-  };
-
+  /* FINAL BOOKING */
   const handleBooking = async () => {
     if (!customer.name || !customer.phone) {
       toast.warn("Enter your details!");
@@ -77,13 +79,13 @@ function HighlightBookingModal({ highlight, onClose }) {
 
     const cleanPhone = customer.phone.replace(/\D/g, "");
     if (cleanPhone.length !== 10) {
-      toast.warn("Enter a valid 10-digit WhatsApp number!");
+      toast.warn("Enter valid 10-digit number!");
       return;
     }
 
     try {
       await addDoc(collection(db, "bookings"), {
-        eventId: highlight.id || eventName, // link using highlight id or name
+        eventId,
         event: eventName,
         date: selectedDate.toISOString().split("T")[0],
         customerName: customer.name,
@@ -92,121 +94,127 @@ function HighlightBookingModal({ highlight, onClose }) {
         timestamp: Date.now(),
       });
 
-      toast.success("Booking Sent 🎉 Admin will confirm soon.");
+      toast.success("Booking Sent 🎉");
 
-      const msg = `📩 New Booking Request\n\nEvent: ${eventName}\nDate: ${
-        selectedDate.toISOString().split("T")[0]
-      }\nName: ${customer.name}\nPhone: ${cleanPhone}\n\nPlease open Admin Panel to confirm.`;
+      const msg =
+        `📩 New Booking\nEvent: ${eventName}\nDate: ${selectedDate.toISOString().split("T")[0]}\n` +
+        `Name: ${customer.name}\nPhone: ${cleanPhone}`;
 
       window.open(
         `https://wa.me/${adminNumber}?text=${encodeURIComponent(msg)}`,
         "_blank"
       );
 
-      handleClose();
-    } catch (error) {
-      console.error("Booking error:", error);
-      toast.error("Booking failed");
+      setShowForm(false);
+      setSelectedDate(null);
+      setCustomer({ name: "", phone: "" });
+
+      onClose();
+    } catch (err) {
+      console.error("Booking error:", err);
+      toast.error("Unable to book");
     }
   };
 
-  if (!highlight) return null;
-
   return (
-    <div className="modal-overlay fade-in">
-      <div className="modal-box glass-box fade-in">
-        <button className="close-btn" onClick={handleClose}>
-          ✖
-        </button>
+    <div
+      className="calendar-popup-on-card"
+      style={{
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+      }}
+    >
+      <button className="close-mini" onClick={onClose}>
+        ✖
+      </button>
 
-        {/* STEP 1 — CALENDAR */}
-        {!showForm ? (
-          <>
-            <h3>Select Date</h3>
+      {!showForm ? (
+        <>
+          <h3 style={{ textAlign: "center", marginBottom: 10 }}>
+            Select Date
+          </h3>
 
-            <div className="calendar-glass-wrapper">
-              {loading ? (
-                <p>Loading calendar...</p>
-              ) : (
-                <Calendar
-                  onClickDay={(d) => setSelectedDate(d)}
-                  tileDisabled={disableDates}
-                  tileClassName={({ date }) =>
-                    bookedDates.some(
-                      (b) => b.toDateString() === date.toDateString()
-                    )
-                      ? "booked-date"
-                      : selectedDate &&
-                        selectedDate.toDateString() === date.toDateString()
-                      ? "selected-date"
-                      : ""
-                  }
-                />
-              )}
-            </div>
-
-            <button className="confirm-btn glow" onClick={handleContinue}>
-              Continue →
-            </button>
-          </>
-        ) : (
-          <>
-            {/* STEP 2 — USER FORM */}
-            <h3>Enter Your Details</h3>
-
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Your Name"
-              value={customer.name}
-              onChange={(e) =>
-                setCustomer({ ...customer, name: e.target.value })
-              }
-              style={{ marginTop: "10px" }}
-            />
-
-            <div className="phone-field">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                width="26"
-                height="26"
-                alt="WhatsApp"
-              />
-              <input
-                type="tel"
-                className="form-control"
-                placeholder="WhatsApp Number"
-                value={customer.phone}
-                onChange={(e) =>
-                  setCustomer({ ...customer, phone: e.target.value })
+          <div className="calendar-glass-wrapper">
+            {loading ? (
+              <p>Loading…</p>
+            ) : (
+              <Calendar
+                onClickDay={(d) => setSelectedDate(d)}
+                tileDisabled={disableDates}
+                tileClassName={({ date }) =>
+                  bookedDates.some(
+                    (d) => d.toDateString() === date.toDateString()
+                  )
+                    ? "booked-date"
+                    : selectedDate &&
+                      selectedDate.toDateString() === date.toDateString()
+                    ? "selected-date"
+                    : ""
                 }
               />
-            </div>
+            )}
+          </div>
 
-            <button
-              className="confirm-btn glow"
-              style={{ marginTop: "10px" }}
-              onClick={handleBooking}
-            >
-              Confirm Booking ✔
-            </button>
-          </>
-        )}
-      </div>
+          <button className="confirm-btn glow" onClick={handleContinue}>
+            Continue →
+          </button>
+        </>
+      ) : (
+        <>
+          <h3 style={{ textAlign: "center" }}>Enter Your Details</h3>
+
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Your Name"
+            value={customer.name}
+            onChange={(e) =>
+              setCustomer({ ...customer, name: e.target.value })
+            }
+          />
+
+          <div className="phone-field">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+              width="26"
+              alt=""
+            />
+            <input
+              type="tel"
+              className="form-control"
+              placeholder="WhatsApp Number"
+              value={customer.phone}
+              onChange={(e) =>
+                setCustomer({ ...customer, phone: e.target.value })
+              }
+            />
+          </div>
+
+          <button className="confirm-btn glow" onClick={handleBooking}>
+            Confirm Booking ✔
+          </button>
+        </>
+      )}
     </div>
   );
 }
 
-/* ============================
-            HOME
-============================ */
+/* ============================================================
+                              HOME
+============================================================ */
 function Home() {
   const [slides, setSlides] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [highlights, setHighlights] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userBookings, setUserBookings] = useState({ upcoming: [], past: [] });
-  const [activeHighlight, setActiveHighlight] = useState(null);
+
+  const [userBookings, setUserBookings] = useState({
+    upcoming: [],
+    past: [],
+  });
+
+  const [activeHighlightId, setActiveHighlightId] = useState(null);
 
   const trackRef = useRef(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -215,37 +223,35 @@ function Home() {
 
   const navigate = useNavigate();
 
-  /* SLIDER IMAGES */
+  /* LOAD SLIDES */
   useEffect(() => {
-    async function loadSlides() {
+    async function load() {
       try {
         const snap = await getDocs(collection(db, "slides"));
-        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        setSlides(list);
+        setSlides(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
       } catch (err) {
-        console.error("Slide Load Error:", err);
+        console.error(err);
       }
     }
-    loadSlides();
+    load();
   }, []);
 
-  const goToSlide = (index) => {
+  /* SLIDER ANIMATION */
+  const goToSlide = (i) => {
     if (slides.length === 0) return;
-    const total = slides.length;
-    setCurrentSlide((index + total) % total);
+    setCurrentSlide((i + slides.length) % slides.length);
   };
+  useEffect(() => {
+    const t = setInterval(() => goToSlide(currentSlide + 1), 3500);
+    return () => clearInterval(t);
+  }, [currentSlide, slides.length]);
 
   useEffect(() => {
-    const track = trackRef.current;
-    if (!track || slides.length === 0) return;
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
-  }, [currentSlide, slides]);
-
-  useEffect(() => {
-    if (slides.length === 0) return;
-    const auto = setInterval(() => goToSlide(currentSlide + 1), 3500);
-    return () => clearInterval(auto);
-  }, [currentSlide, slides]);
+    if (!trackRef.current) return;
+    trackRef.current.style.transform = `translateX(-${
+      currentSlide * 100
+    }%)`;
+  }, [currentSlide]);
 
   const startDrag = (e) => {
     isDragging.current = true;
@@ -259,38 +265,33 @@ function Home() {
       isDragging.current = false;
     }
   };
-  const endDrag = () => {
-    isDragging.current = false;
-  };
 
   /* GALLERY */
   useEffect(() => {
-    async function loadGallery() {
+    async function load() {
       try {
         const snap = await getDocs(collection(db, "gallery"));
-        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        setGallery(list);
+        setGallery(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     }
-    loadGallery();
+    load();
   }, []);
 
   /* HIGHLIGHTS */
   useEffect(() => {
-    async function loadHighlights() {
+    async function load() {
       try {
         const snap = await getDocs(collection(db, "highlights"));
-        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        setHighlights(list);
+        setHighlights(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
       } catch (err) {
-        console.error("Highlight load error:", err);
+        console.error(err);
       }
     }
-    loadHighlights();
+    load();
   }, []);
 
   /* USER DASHBOARD */
@@ -298,17 +299,14 @@ function Home() {
     const phone = localStorage.getItem("userPhone")?.replace(/\D/g, "");
     const all = JSON.parse(localStorage.getItem("bookings")) || [];
 
-    if (!phone || phone.length !== 10) {
-      setUserBookings({ upcoming: [], past: [] });
-      return;
-    }
+    if (!phone || phone.length !== 10) return;
 
     const today = new Date().toISOString().split("T")[0];
-    const filtered = all.filter((b) => b.phone === phone);
+    const my = all.filter((b) => b.phone === phone);
 
     setUserBookings({
-      upcoming: filtered.filter((b) => b.date >= today),
-      past: filtered.filter((b) => b.date < today),
+      upcoming: my.filter((b) => b.date >= today),
+      past: my.filter((b) => b.date < today),
     });
   }, []);
 
@@ -319,11 +317,15 @@ function Home() {
 
   return (
     <div className="fade-in">
-      {/* HERO */}
+
+      {/* ================= HERO ================= */}
       <section className="page-section" style={{ paddingTop: "100px" }}>
         <div className="container">
           <div className="main-hero">
-            <div className="hero-left slide-up" style={{ textAlign: "center" }}>
+            <div
+              className="hero-left slide-up"
+              style={{ textAlign: "center" }}
+            >
               <h1
                 style={{
                   fontSize: "44px",
@@ -335,32 +337,43 @@ function Home() {
               >
                 Make Your Events Memorable 🎉
               </h1>
+
               <p className="hero-desc">
-                We bring your dream event to life with creativity, passion and
-                precision.
+                We bring your dream event to life with creativity, passion
+                and precision.
               </p>
+
               <button className="btn glow" onClick={() => goTo("/events")}>
                 Explore Events
               </button>
-            </div><br />
+            </div>
+            <br />
 
-            {/* SLIDER */}
+            {/* ============= SLIDER ============= */}
             <div className="hero-right fade-in">
               <div
                 className="flip-slider-container"
                 onTouchStart={startDrag}
                 onTouchMove={onDrag}
-                onTouchEnd={endDrag}
+                onTouchEnd={() => (isDragging.current = false)}
               >
                 <div className="flip-slider-track" ref={trackRef}>
                   {(slides.length
                     ? slides
-                    : [{ imageUrl: "https://picsum.photos/seed/slide/600/350" }]
+                    : [
+                        {
+                          imageUrl:
+                            "https://picsum.photos/seed/slide/600/350",
+                        },
+                      ]
                   ).map((slide, i) => (
                     <div className="flip-card" key={i}>
                       <div className="flip-inner">
                         <div className="flip-front">
-                          <img src={slide.imageUrl} className="slider-img" />
+                          <img
+                            src={slide.imageUrl}
+                            className="slider-img"
+                          />
                         </div>
                         <div className="flip-back">
                           <h3>Premium Event</h3>
@@ -376,7 +389,9 @@ function Home() {
                 {slides.map((_, i) => (
                   <div
                     key={i}
-                    className={`dot ${i === currentSlide ? "active" : ""}`}
+                    className={`dot ${
+                      i === currentSlide ? "active" : ""
+                    }`}
                     onClick={() => goToSlide(i)}
                   />
                 ))}
@@ -386,32 +401,27 @@ function Home() {
         </div>
       </section>
 
-      {/* USER DASHBOARD */}
+      {/* ================= USER DASHBOARD ================= */}
       <section className="page-section">
         <h2 className="section-title">User Dashboard</h2>
         <p className="section-sub">Your event booking details</p>
 
-        <div style={{ textAlign: "center", marginBottom: "10px" }}>
+        <div style={{ textAlign: "center", marginBottom: 10 }}>
           <button className="btn glow" onClick={() => goTo("/bookinghistory")}>
             Booking History
           </button>
         </div>
 
-        {userBookings.upcoming.length === 0 &&
-          userBookings.past.length === 0 && (
-            <p className="text-muted" style={{ textAlign: "center" }}>
-              No bookings found for your number.
-            </p>
-          )}
-
+        {/* UPCOMING */}
         {userBookings.upcoming.length > 0 && (
           <>
-            <h3 className="section-title" style={{ marginTop: "20px" }}>
+            <h3 className="section-title" style={{ marginTop: 20 }}>
               Upcoming Bookings
             </h3>
+
             <div className="booking-history-container fade-in">
-              {userBookings.upcoming.map((b, index) => (
-                <div className="booking-card zoom-in" key={index}>
+              {userBookings.upcoming.map((b, i) => (
+                <div className="booking-card zoom-in" key={i}>
                   <h3>{b.event}</h3>
                   <p>
                     <b>Date:</b> {b.date}
@@ -431,14 +441,16 @@ function Home() {
           </>
         )}
 
+        {/* PAST */}
         {userBookings.past.length > 0 && (
           <>
-            <h3 className="section-title" style={{ marginTop: "25px" }}>
+            <h3 className="section-title" style={{ marginTop: 25 }}>
               Past Bookings
             </h3>
+
             <div className="booking-history-container fade-in">
-              {userBookings.past.map((b, index) => (
-                <div className="booking-card zoom-in" key={index}>
+              {userBookings.past.map((b, i) => (
+                <div className="booking-card zoom-in" key={i}>
                   <h3>{b.event}</h3>
                   <p>
                     <b>Date:</b> {b.date}
@@ -459,90 +471,60 @@ function Home() {
         )}
       </section>
 
-
-      {/* EVENT HIGHLIGHTS */}
+      {/* ================= EVENT HIGHLIGHTS (MATCH EVENTCARD STYLE) ================= */}
       <section className="page-section">
         <h2 className="section-title">Event Highlights</h2>
 
         <div className="event-container fade-in">
-          {highlights.length > 0 &&
-            highlights.map((h) => {
-              const title = h.title || h.event || "Premium Event";
-              const img = h.imageUrl || h.imageurl;
-              const price = h.price;
+          {highlights.map((h) => {
+            const title = h.title || h.event || "Premium Event";
+            const img = h.imageUrl || h.imageurl;
+            const price = h.price;
 
-              return (
-                <div
-                  className="event-card event-card-overlay zoom-in"
-                  key={h.id}
-                >
-                  <div className="event-img-wrap">
-                    <img
-                      src={img}
-                      className="event-img"
-                      alt={title}
+            return (
+              <div className="event-card zoom-in" key={h.id}>
+                {/* SAME IMAGE STYLE AS EVENTCARD */}
+                <img src={img} className="event-img" alt={title} />
+
+                {/* SAME CONTENT STYLE AS EVENTCARD */}
+                <div className="event-content">
+                  <h3>{title}</h3>
+
+                  {price && (
+                    <p className="event-price">₹ {price}</p>
+                  )}
+
+                  {h.description && (
+                    <p className="event-desc">{h.description}</p>
+                  )}
+
+                  {/* BOOK BUTTON */}
+                  <button
+                    className="book-btn glow"
+                    onClick={() =>
+                      setActiveHighlightId(
+                        activeHighlightId === h.id ? null : h.id
+                      )
+                    }
+                  >
+                    {h.buttonText || "Book Now"}
+                  </button>
+
+                  {/* INLINE FLOATING POPUP */}
+                  {activeHighlightId === h.id && (
+                    <InlineHighlightPopup
+                      highlight={h}
+                      onClose={() => setActiveHighlightId(null)}
                     />
-                    <div className="event-overlay">
-                      <h3>{title}</h3>
-                      {price && (
-                        <p className="event-price">{price}</p>
-                      )}
-                      {h.description && (
-                        <p className="event-desc">{h.description}</p>
-                      )}
-
-                      <button
-                        className="btn glow mt-8"
-                        onClick={() => setActiveHighlight(h)}
-                      >
-                        {h.buttonText || "Book Now"}
-                      </button>
-                    </div>
-                  </div>
+                  )}
                 </div>
-              );
-            })}
-
-          {/* Fallback if no highlights in DB */}
-          {highlights.length === 0 &&
-            [1, 2, 3].map((n) => {
-              const dummy = {
-                event: `Premium Event #${n}`,
-                price: "₹9,999",
-                imageUrl: `https://picsum.photos/seed/highlight${n}/600/350`,
-              };
-              return (
-                <div
-                  className="event-card event-card-overlay zoom-in"
-                  key={n}
-                >
-                  <div className="event-img-wrap">
-                    <img
-                      src={dummy.imageUrl}
-                      className="event-img"
-                      alt={dummy.event}
-                    />
-                    <div className="event-overlay">
-                      <h3>{dummy.event}</h3>
-                      <p className="event-price">{dummy.price}</p>
-                      <p className="event-desc">
-                        Beautifully planned & executed celebration.
-                      </p>
-                      <button
-                        className="btn glow mt-8"
-                        onClick={() => setActiveHighlight(dummy)}
-                      >
-                        Book Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+              </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* GALLERY */}
+      {/* ================= GALLERY ================= */}
       <section className="gallery-section page-section">
         <h2 className="section-title">Event Gallery</h2>
 
@@ -572,8 +554,7 @@ function Home() {
         </div>
       </section>
 
-
-      {/* SERVICES */}
+      {/* ================= SERVICES ================= */}
       <section className="page-section">
         <h2 className="section-title">Our Services</h2>
         <p className="section-sub">From planning to execution.</p>
@@ -596,38 +577,35 @@ function Home() {
             <h3>Birthday Events</h3>
             <p>Creative theme arrangements.</p>
           </div>
-        </div> <br></br>
+        </div>
 
-        <button className="btn glow mt-24" onClick={() => goTo("/services")}>
+        <br />
+        <button
+          className="btn glow mt-24"
+          onClick={() => goTo("/services")}
+        >
           View All Services
         </button>
       </section>
 
-
-      {/* ABOUT PREVIEW */}
+      {/* ================= ABOUT ================= */}
       <section className="page-section">
         <h2 className="section-title">Why Choose Us?</h2>
 
         <div className="about-section">
           <p className="about-text">
-            Praba Events delivers premium, customized experiences with years of
-            expertise.
+            Praba Events delivers premium, customized experiences with years
+            of expertise.
           </p>
 
-          <button className="btn glow mt-24" onClick={() => goTo("/about")}>
+          <button
+            className="btn glow mt-24"
+            onClick={() => goTo("/about")}
+          >
             Know More
           </button>
         </div>
       </section>
-
-
-      {/* HIGHLIGHT BOOKING MODAL (shown when user clicks Book Now) */}
-      {activeHighlight && (
-        <HighlightBookingModal
-          highlight={activeHighlight}
-          onClose={() => setActiveHighlight(null)}
-        />
-      )}
     </div>
   );
 }

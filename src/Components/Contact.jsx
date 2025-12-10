@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaPhoneAlt, FaWhatsapp, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import { FaPhoneAlt, FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -30,8 +30,8 @@ function Contact() {
         <div className="contact-card zoom-in">
           <FaPhoneAlt size={28} color="#00eaff" style={{ marginBottom: "10px" }} />
           <h3>Call Us</h3>
-          <p className="contact-info">+91 98765 43210</p>
-          <a href="tel:+919876543210" className="btn glow">Call Now</a>
+          <p className="contact-info">+91 70943 25920</p>
+          <a href="tel:+917094325920" className="btn glow">Call Now</a>
         </div>
 
         {/* WHATSAPP */}
@@ -40,7 +40,7 @@ function Contact() {
           <h3>Chat on WhatsApp</h3>
           <p className="contact-info">Available 24/7</p>
           <a
-            href="https://wa.me/919876543210"
+            href="https://wa.me/917094325920"
             target="_blank"
             rel="noopener noreferrer"
             className="btn glow"
@@ -49,22 +49,34 @@ function Contact() {
           </a>
         </div>
 
-        {/* EMAIL */}
+        {/* INSTAGRAM (Updated Box 3) */}
         <div className="contact-card zoom-in">
-          <FaEnvelope size={32} color="#00eaff" style={{ marginBottom: "10px" }} />
-          <h3>Email</h3>
-          <p className="contact-info">contact@prabaevents.com</p>
-          <a href="mailto:contact@prabaevents.com" className="btn glow">
-            Send Email
+          <FaInstagram size={32} color="#E1306C" style={{ marginBottom: "10px" }} />
+          <h3>Instagram</h3>
+          <p className="contact-info">@prabaevents</p>
+          <a
+            href="https://instagram.com/praba_events_paranji"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn glow"
+          >
+            Follow Us
           </a>
         </div>
 
-        {/* LOCATION */}
+        {/* FACEBOOK (Updated Box 4) */}
         <div className="contact-card zoom-in">
-          <FaMapMarkerAlt size={32} color="#ff4d4d" style={{ marginBottom: "10px" }} />
-          <h3>Location</h3>
-          <p className="contact-info">Coimbatore, Tamil Nadu</p>
-          <a href="#" className="btn glow">View Location</a>
+          <FaFacebook size={32} color="#1877F2" style={{ marginBottom: "10px" }} />
+          <h3>Facebook</h3>
+          <p className="contact-info">Praba Events</p>
+          <a
+            href="https://facebook.com/praba.raman.58"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn glow"
+          >
+            View Page
+          </a>
         </div>
       </div>
 

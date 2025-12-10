@@ -8,7 +8,7 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
 function EventCard({ id, name, price, image }) {
-  const [showModal, setShowModal] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [bookedDates, setBookedDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -62,7 +62,7 @@ function EventCard({ id, name, price, image }) {
 
     const cleanPhone = customer.phone.replace(/\D/g, "");
     if (cleanPhone.length !== 10) {
-      toast.warn("Enter a valid 10-digit WhatsApp number!");
+      toast.warn("Enter valid WhatsApp number!");
       return;
     }
 
@@ -77,138 +77,122 @@ function EventCard({ id, name, price, image }) {
         timestamp: Date.now(),
       });
 
-      toast.success("Booking Sent 🎉 Admin will confirm soon.");
+      toast.success("Booking Sent 🎉");
 
-      const msg = `📩 New Booking Request\n\nEvent: ${name}\nDate: ${
+      const msg = `📩 New Booking\nEvent: ${name}\nDate: ${
         selectedDate.toISOString().split("T")[0]
-      }\nName: ${customer.name}\nPhone: ${cleanPhone}\n\nPlease open Admin Panel to confirm.`;
+      }\nName: ${customer.name}\nPhone: ${cleanPhone}`;
 
       window.open(
         `https://wa.me/${adminNumber}?text=${encodeURIComponent(msg)}`,
         "_blank"
       );
 
-      // CLOSE MODAL (no scroll lock)
-      setShowModal(false);
+      // Reset
+      setShowCalendar(false);
       setShowForm(false);
-      setCustomer({ name: "", phone: "" });
       setSelectedDate(null);
-
+      setCustomer({ name: "", phone: "" });
     } catch (error) {
-      console.error("Booking error:", error);
+      console.error(error);
       toast.error("Booking failed");
     }
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setShowForm(false);
-    setSelectedDate(null);
-  };
-
   return (
-    <>
-      {/* EVENT CARD */}
-      <div className="event-card reveal zoom-in">
-        {loading ? (
-          <div className="shimmer"></div>
-        ) : (
-          <>
-            <img src={image} alt={name} className="event-img" />
+    <div className="event-card reveal zoom-in" style={{ position: "relative" }}>
+      <img src={image} alt={name} className="event-img" />
 
-            <div className="event-content">
-              <h3>{name}</h3>
-              <p className="event-price">₹ {price}</p>
+      <div className="event-content">
+        <h3>{name}</h3>
+        <p className="event-price">₹ {price}</p>
 
-              <button
-                className="book-btn glow"
-                onClick={() => setShowModal(true)} // ⬅ no overflow change
-              >
-                Book Now
-              </button>
-            </div>
-          </>
-        )}
+        <button
+          className="book-btn glow"
+          onClick={() => {
+            setShowCalendar(!showCalendar);
+            setShowForm(false);
+          }}
+        >
+          Book Now
+        </button>
       </div>
 
-      {/* MODAL */}
-      {showModal && (
-        <>
-          <div className="modal-overlay fade-in" onClick={handleCloseModal}></div>
+      {/* POPUP CALENDAR ON CARD */}
+      {showCalendar && (
+        <div className="calendar-popup-on-card fade-in">
+          <button
+            className="close-mini"
+            onClick={() => {
+              setShowCalendar(false);
+              setShowForm(false);
+            }}
+          >
+            ✖
+          </button>
 
-          <div className="modal-box fade-in glass-box">
-            <button className="close-btn" onClick={handleCloseModal}>
-              ✖
-            </button>
+          {!showForm ? (
+            <>
+              <h3>Select Date</h3>
 
-            {!showForm ? (
-              <>
-                <h3>Select Date</h3>
-                <div className="calendar-glass-wrapper">
-                  {loading ? (
-                    <p>Loading calendar...</p>
-                  ) : (
-                    <Calendar
-                      onClickDay={(d) => setSelectedDate(d)}
-                      tileDisabled={disableDates}
-                      tileClassName={({ date }) =>
-                        bookedDates.some(
-                          (b) => b.toDateString() === date.toDateString()
-                        )
-                          ? "booked-date"
-                          : selectedDate &&
-                            selectedDate.toDateString() === date.toDateString()
-                          ? "selected-date"
-                          : ""
-                      }
-                    />
-                  )}
-                </div>
-                <button className="confirm-btn glow" onClick={handleContinue}>
-                  Continue →
-                </button>
-              </>
-            ) : (
-              <>
-                <h3>Enter Your Details</h3>
-
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Your Name"
-                  value={customer.name}
-                  onChange={(e) =>
-                    setCustomer({ ...customer, name: e.target.value })}
-                />
-                <div className="phone-field">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                    width="26"
-                    height="26"
-                    alt="WhatsApp"
+              <div className="calendar-glass-wrapper">
+                {loading ? (
+                  <p>Loading…</p>
+                ) : (
+                  <Calendar
+                    onClickDay={(d) => setSelectedDate(d)}
+                    tileDisabled={disableDates}
+                    tileClassName={({ date }) =>
+                      bookedDates.some(
+                        (b) => b.toDateString() === date.toDateString()
+                      )
+                        ? "booked-date"
+                        : selectedDate &&
+                          selectedDate.toDateString() === date.toDateString()
+                        ? "selected-date"
+                        : ""
+                    }
                   />
-                  <input
-                    type="tel"
-                    className="form-control"
-                    placeholder="WhatsApp Number"
-                    value={customer.phone}
-                    onChange={(e) =>
-                      setCustomer({ ...customer, phone: e.target.value })}
-                  />
-                </div>
+                )}
+              </div>
 
-                <button
-                  className="confirm-btn glow"
-                  onClick={handleBooking}
-                >
-                  Confirm Booking ✔
-                </button>
-              </>
-            )}
-          </div>
-        </>
+              <button className="confirm-btn glow" onClick={handleContinue}>
+                Continue →
+              </button>
+            </>
+          ) : (
+            <>
+              <h3>Enter Details</h3>
+
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Your Name"
+                value={customer.name}
+                onChange={(e) =>
+                  setCustomer({ ...customer, name: e.target.value })
+                }
+              />
+
+              <input
+                type="tel"
+                className="form-control"
+                placeholder="WhatsApp Number"
+                value={customer.phone}
+                onChange={(e) =>
+                  setCustomer({ ...customer, phone: e.target.value })
+                }
+                style={{ marginTop: "10px" }}
+              />
+
+              <button className="confirm-btn glow" onClick={handleBooking}>
+                Confirm Booking ✔
+              </button>
+            </>
+          )}
+        </div>
       )}
-    </>
+    </div>
   );
 }
 

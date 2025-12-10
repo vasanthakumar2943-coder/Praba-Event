@@ -29,7 +29,7 @@ body[data-theme="dark"] {
 }
 body[data-theme="light"] {
   background: #525050;
-  color: #000;
+  color: #fff;
 }
 
 /* Reusable glass */
@@ -75,6 +75,7 @@ img {
 }
 .nav-logo {
   font-size: 1.7rem;
+  align-items: center;
   font-weight: 700;
   color: var(--theme-color);
   letter-spacing: 0.5px;
@@ -108,7 +109,7 @@ img {
   transition: 0.3s;
 }
 .icon-btn:hover {
-  background: var(--theme-color);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.5);
   transform: translateY(-3px);
 }
 
@@ -149,7 +150,7 @@ img {
     flex-direction: column;
     padding: 18px;
     border-radius: 12px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(32, 32, 32, 0.973);
     backdrop-filter: blur(12px);
     gap: 12px;
     transition: 0.3s;
@@ -358,6 +359,7 @@ img {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
+  min-height: 470px;
   overflow: hidden;
   backdrop-filter: blur(12px);
   transition: 0.35s ease;
@@ -369,7 +371,7 @@ img {
 }
 .event-img {
   width: 100%;
-  height: 180px;
+  height: 300px;
   object-fit: cover;
 }
 .event-content {
@@ -438,127 +440,270 @@ img {
   opacity: 0.9;
 }
 
+/* ======================================================
+   RESPONSIVE EVENT CARD IMAGE HEIGHT (MATCHES CALENDAR)
+====================================================== */
+
+/* Tablet & mid screens */
 @media (max-width: 900px) {
   .event-img-wrap {
-    height: 230px;
+    height: 260px;   /* increased to fit calendar popup */
   }
 }
 
+/* Mobile */
 @media (max-width: 600px) {
+  .event-img-wrap {
+    height: 240px;   /* better balance for small screens */
+  }
+}
+
+/* Small mobile (very small phones) */
+@media (max-width: 420px) {
   .event-img-wrap {
     height: 220px;
   }
 }
-/* ===== Calendar Glass Theme Fix ===== */
+
+/* Tiny devices */
+@media (max-width: 360px) {
+  .event-img-wrap {
+    height: 200px;
+  }
+}
+
+/* ======================================================
+   FIX — EVENT CARD MUST HOLD POPUP
+====================================================== */
+.event-card {
+  position: relative !important;
+  overflow: visible !important;
+  z-index: 1;
+}
+/* ======================================================
+   CALENDAR GLASS THEME (BEAUTIFUL UI)
+====================================================== */
 .react-calendar {
-  background: rgba(0, 0, 0, 0.7) !important;
+  background: rgba(0, 0, 0, 0.65) !important;
   backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 234, 255, 0.3) !important;
   border-radius: 16px;
+  padding: 12px;
   color: #fff !important;
-  padding: 10px;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
 }
 
+/* Navigation */
 .react-calendar__navigation button {
   background: transparent !important;
   color: var(--theme-color) !important;
   font-weight: bold;
   font-size: 18px;
+  transition: 0.25s ease;
 }
 .react-calendar__navigation button:hover {
-  color: #ffffff !important;
+  color: #fff !important;
   text-shadow: 0 0 10px var(--theme-color);
 }
 
+/* Weekday titles */
 .react-calendar__month-view__weekdays {
   color: #aaa !important;
   font-weight: 600;
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  text-align: center !important;
 }
 
+/* ======================================================
+   FIX — ALWAYS SHOW ALL 7 DAYS IN ONE ROW
+====================================================== */
+.react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 3px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ======================================================
+   TILE STYLE (DESKTOP DEFAULT)
+====================================================== */
 .react-calendar__tile {
   background: transparent !important;
   color: #fff !important;
   border-radius: 8px;
-  transition: 0.25s ease;
+  transition: 0.2s ease;
+  
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  padding: 0 !important;
 }
 
+/* Hover + Active */
 .react-calendar__tile:hover {
   background: rgba(0, 234, 255, 0.15) !important;
   box-shadow: 0 0 8px rgba(0, 234, 255, 0.3);
 }
-
 .react-calendar__tile--active {
   background: var(--theme-color) !important;
   color: #000 !important;
   font-weight: bold;
   box-shadow: 0 0 10px var(--theme-color);
 }
-
 .react-calendar__tile--now {
   background: rgba(255, 255, 255, 0.1) !important;
   border: 1px solid var(--theme-color);
-  color: #fff !important;
 }
-
 .react-calendar__month-view__days__day--weekend {
   color: #ff4d4d !important;
 }
 
+/* ======================================================
+   POPUP STYLING — CENTERED ON CARD
+====================================================== */
+.calendar-popup-on-card {
+  position: absolute;
+  top: 0;
+  
+  transform: translate(-50%, -50%);
+  
+  width: 100%;
+  max-width: 360px;
+  max-height: 520px;
 
-/* ===== DESKTOP POPUP (CENTER MODAL) ===== */
-@media (min-width: 481px) {
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(5px);
-    z-index: 9000;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  border: 1px solid rgba(0, 234, 255, 0.3);
+
+  z-index: 9999999;
+  animation: popupSlide 0.25s ease-out;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+@keyframes popupSlide {
+  from { opacity: 0; transform: translate(-50%, -40%); }
+  to   { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+/* Close button */
+.close-mini {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: var(--theme-color);
+  color: #000;
+  font-weight: bold;
+  font-size: 18px;
+  box-shadow: 0 0 10px var(--theme-color);
+}
+
+/* Form inside popup */
+.calendar-popup-on-card .form-control {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+}
+.calendar-popup-on-card .form-control:focus {
+  outline: none;
+  border-color: var(--theme-color);
+  box-shadow: 0 0 8px var(--theme-color);
+}
+
+/* WhatsApp field */
+.phone-field {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Highlight container */
+.highlight-popup-container {
+  position: relative;
+  z-index: 9999;
+  width: 100%;
+}
+
+/* ======================================================
+   RESPONSIVE — TABLET
+====================================================== */
+@media (max-width: 768px) {
+  .react-calendar__tile {
+    height: 34px !important;
+    font-size: 14px !important;
   }
-
-  .modal-box {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 90%;
-    max-width: 450px;
-    background: rgba(0,0,0,0.85);
-    border-radius: 18px;
-    z-index: 9999;
-    padding: 20px;
+  .react-calendar__navigation button {
+    font-size: 16px !important;
   }
 }
 
-
-/* ===== MOBILE POPUP (INSIDE CARD) ===== */
+/* ======================================================
+   RESPONSIVE — MOBILE
+====================================================== */
 @media (max-width: 480px) {
-  .modal-overlay {
-    display: none !important; /* No overlay */
-  }
-
-  .modal-box {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    transform: none !important;
-    width: 100% !important;
-    margin-top: 10px;
-    padding: 15px;
-    border-radius: 14px;
-    background: rgba(0,0,0,0.85);
-  }
-
-  .close-btn {
+  .calendar-popup-on-card {
+    max-width: 300px;
+    padding: 14px;
     position: absolute;
-    top: -10px;
-    right: -10px;
-    background: var(--theme-color);
-    color: #000;
-    padding: 6px 10px;
-    border-radius: 50%;
-    font-size: 14px;
+    
+  }
+  .react-calendar {
+    padding: 8px !important;
+    font-size: 12px !important;
+    
+  }
+  .react-calendar__tile {
+    height: 28px !important;
+    font-size: 12px !important;
+  }
+  .react-calendar__month-view__weekdays {
+    font-size: 10px !important;
+  }
+  .react-calendar__navigation button {
+    font-size: 14px !important;
+    padding: 2px !important;
   }
 }
+
+/* ======================================================
+   TINY DEVICES
+====================================================== */
+@media (max-width: 360px) {
+  .react-calendar__tile {
+    height: 24px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* ======================================================
+   DISABLE OLD MODAL
+====================================================== */
+.modal-overlay,
+.modal-box {
+  display: none !important;
+}
+
 
 /* End of Part 1 */
 /* ======================================================
@@ -643,7 +788,7 @@ img {
   padding: 14px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(128, 127, 127, 0.05);
   color: white;
   font-size: 1rem;
   outline: none;
@@ -774,7 +919,7 @@ textarea.form-input {
   padding: 12px 15px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgb(255, 255, 255);
   color: white;
   margin-top: 12px;
   font-size: 1rem;
@@ -985,11 +1130,15 @@ textarea.form-input {
 /* ======================================================
   14. ADMIN PANEL (wrapper, cards, tables)
 ====================================================== */
+
+/* FIX 1: Make admin full width on desktop */
 .admin-wrapper {
   padding: 120px 20px 40px;
-  max-width: 1200px;
+  max-width: 1200px !important; /* ensure full desktop width */
+  width: 100% !important;       /* <--- IMPORTANT FIX */
   margin: auto;
 }
+
 .admin-title {
   font-size: 32px;
   color: var(--theme-color);
@@ -998,7 +1147,7 @@ textarea.form-input {
   font-weight: bold;
 }
 
-/* Glass card (used across admin) */
+/* Glass card */
 .glass-card {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(12px);
@@ -1008,8 +1157,15 @@ textarea.form-input {
   margin: 20px auto;
   width: 100%;
   max-width: 450px;
+
+  /* FIX 2: Allow wider layout on large screens */
+  @media (min-width: 1024px) {
+    max-width: 650px; /* does NOT break layout, stops mobile look */
+  }
+
   animation: fadeIn 0.5s ease;
 }
+
 .preview-img {
   width: 100%;
   height: 160px;
@@ -1019,7 +1175,7 @@ textarea.form-input {
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-/* UNDO FAB (floating) - preferred over old undo-btn */
+/* UNDO FAB */
 .undo-fab {
   position: fixed;
   bottom: 100px;
@@ -1061,19 +1217,22 @@ textarea.form-input {
 .admin-table-wrap,
 .table-wrapper {
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden !important;
   margin-top: 20px;
   padding-bottom: 10px;
 }
+
+/* FIX 3: Table should fill full desktop width */
 .admin-table {
-  width: 100%;
-  min-width: 750px;
+  width: 100% !important;
+  min-width: unset !important;       /* slightly wider for desktop look */
   border-collapse: collapse;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   border-radius: 12px;
   overflow: hidden;
 }
+
 .admin-table th {
   background: var(--theme-color);
   color: black;
@@ -1081,6 +1240,7 @@ textarea.form-input {
   font-size: 15px;
   text-align: center;
 }
+
 .admin-table td {
   padding: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
@@ -1172,7 +1332,7 @@ textarea.form-input {
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-/* Booking history UI (user side) */
+/* Booking history UI */
 .no-events-text {
   font-size: 1.1rem;
   opacity: 0.85;
@@ -1258,6 +1418,7 @@ textarea.form-input {
 .footer-social a {
   margin-right: 12px;
   font-size: 1.4rem;
+  text-decoration: none;
   color: var(--theme-color);
   transition: 0.3s;
   display: inline-flex;
@@ -1405,9 +1566,120 @@ textarea.form-input {
   html {
     font-size: 13px;
   }
+}/* =========================================================
+   GLOBAL RESPONSIVE SYSTEM (Works for all pages)
+========================================================= */
+
+/* Base scaling for small screens */
+html {
+  font-size: 100%;
 }
 
-/* Admin responsive */
+@media (max-width: 992px) {
+  html {
+    font-size: 93%;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 87%;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 80%;
+  }
+}
+
+/* Universal container fix */
+.container, .section {
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* All images responsive */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Headings auto-scale */
+h1 { font-size: 2.3rem; }
+h2 { font-size: 1.9rem; }
+h3 { font-size: 1.5rem; }
+
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.7rem; }
+  h3 { font-size: 1.35rem; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+}
+
+/* =========================================================
+   BUTTON RESPONSIVE (ALL PAGES)
+========================================================= */
+button, .btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  button, .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  button, .btn {
+    padding: 7px 14px;
+    font-size: 0.85rem;
+  }
+}
+
+/* =========================================================
+   TABLE RESPONSIVE (Fixed for all admin + booking)
+========================================================= */
+
+/* Desktop: normal behavior */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* MOBILE FIX — table shrinks but does NOT scroll */
+@media (max-width: 600px) {
+
+  table {
+    table-layout: fixed !important;  /* allow shrink */
+    width: 100% !important;
+  }
+
+  th, td {
+    font-size: 12px !important;
+    padding: 6px 4px !important;
+    white-space: normal !important; /* allow wrapping */
+    word-break: break-word !important;
+  }
+
+  .table-img {
+    width: 45px !important;
+    height: 35px !important;
+  }
+}
+
+/* =========================================================
+   ADMIN PAGE RESPONSIVE (Your code)
+========================================================= */
+
 @media (max-width: 768px) {
   .admin-title {
     font-size: 26px;
@@ -1425,6 +1697,7 @@ textarea.form-input {
     padding: 5px 8px;
   }
 }
+
 @media (max-width: 480px) {
   .admin-title {
     font-size: 22px;
@@ -1435,6 +1708,49 @@ textarea.form-input {
   .table-img {
     width: 55px;
     height: 40px;
+  }
+}
+
+/* =========================================================
+   FORM RESPONSIVE (Contact, Booking, Login)
+========================================================= */
+form input,
+form textarea,
+form select {
+  width: 100%;
+  font-size: 1rem;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  form input,
+  form textarea,
+  form select {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+}
+
+/* =========================================================
+   GRID RESPONSIVE (Services, Events, Gallery)
+========================================================= */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 
