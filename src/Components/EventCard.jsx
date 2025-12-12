@@ -15,7 +15,7 @@ function EventCard({ id, name, price, image }) {
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [loading, setLoading] = useState(true);
 
-  const adminNumber = "91XXXXXXXXXX";
+  const adminNumber = "917094325920";
 
   useEffect(() => {
     const loadBookings = async () => {
@@ -174,16 +174,22 @@ function EventCard({ id, name, price, image }) {
                 }
               />
 
-              <input
-                type="tel"
-                className="form-control"
-                placeholder="WhatsApp Number"
-                value={customer.phone}
-                onChange={(e) =>
-                  setCustomer({ ...customer, phone: e.target.value })
-                }
-                style={{ marginTop: "10px" }}
-              />
+              <div className="phone-field">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                  width="26"
+                  alt=""
+                />
+                <input
+                  type="tel"
+                  className="form-control"
+                  placeholder="WhatsApp Number"
+                  value={customer.phone}
+                  onChange={(e) =>
+                    setCustomer({ ...customer, phone: e.target.value })
+                  }
+                />
+              </div>
 
               <button className="confirm-btn glow" onClick={handleBooking}>
                 Confirm Booking ✔

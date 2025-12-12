@@ -788,8 +788,8 @@ img {
   padding: 14px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(128, 127, 127, 0.05);
-  color: white;
+  background: rgb(255, 255, 255) !important;
+  color: rgb(248, 244, 244);
   font-size: 1rem;
   outline: none;
 }
@@ -936,6 +936,17 @@ textarea.form-input {
   align-items: center;
   gap: 12px;
   margin-top: 12px;
+}
+/* Input background white */
+input {
+  background-color: #ffffff !important;
+  color: #000000 !important; /* text color */
+}
+
+/* Placeholder color black */
+input::placeholder {
+  color: #000000 !important;
+  opacity: 1; /* ensures full visibility */
 }
 
 /* ======================================================

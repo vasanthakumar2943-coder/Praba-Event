@@ -19,7 +19,7 @@ function InlineHighlightPopup({ highlight, onClose }) {
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [loading, setLoading] = useState(true);
 
-  const adminNumber = "91XXXXXXXXXX";
+  const adminNumber = "917094325920";
 
   /* LOAD BOOKINGS */
   useEffect(() => {
