@@ -97,6 +97,49 @@ img {
 .nav-link.active {
   color: var(--theme-color);
 }
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ADMIN IMAGE BUTTON */
+.admin-btn-img {
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.admin-btn-img:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 6px #00eaff);
+}
+
+/* 🔥 FIX: TEXT LOGO (THIS WAS MISSING) */
+/* 🔥 VERY IMPORTANT – allow clicks to pass */
+.glass-nav::before,
+.glass-nav::after {
+  pointer-events: none !important;
+}
+
+/* 🔥 ensure logo is clickable */
+.nav-logo {
+  position: relative;
+  z-index: 5;
+  cursor: pointer;
+  user-select: none;
+}
+
+
+/* (OPTIONAL) if you later use image logo */
+.nav-logo-img {
+  height: 44px;
+  cursor: pointer;
+  user-select: none;
+  pointer-events: auto;
+}
+
 
 /* Icon button */
 .icon-btn {
@@ -372,6 +415,7 @@ img {
 .event-img {
   width: 100%;
   height: 300px;
+  border-radius: 12px;
   object-fit: cover;
 }
 .event-content {
@@ -518,7 +562,7 @@ img {
 }
 
 /* ======================================================
-   FIX — ALWAYS SHOW ALL 7 DAYS IN ONE ROW
+   ALWAYS SHOW ALL 7 DAYS
 ====================================================== */
 .react-calendar__month-view__days {
   display: grid !important;
@@ -529,14 +573,14 @@ img {
 }
 
 /* ======================================================
-   TILE STYLE (DESKTOP DEFAULT)
+   TILE STYLE (DESKTOP)
 ====================================================== */
 .react-calendar__tile {
   background: transparent !important;
   color: #fff !important;
   border-radius: 8px;
-  transition: 0.2s ease;
-  
+  transition: all 0.25s ease;
+
   height: 40px !important;
   display: flex !important;
   align-items: center !important;
@@ -545,23 +589,45 @@ img {
   padding: 0 !important;
 }
 
-/* Hover + Active */
-.react-calendar__tile:hover {
-  background: rgba(0, 234, 255, 0.15) !important;
-  box-shadow: 0 0 8px rgba(0, 234, 255, 0.3);
+/* ===============================
+   🔹 HOVER FIX (REAL WORKING)
+================================ */
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background: rgba(29, 234, 253, 0.897) !important;
+  color: #000 !important;
+ 
+  transform: scale(1.08);
 }
+
+/* ===============================
+   🔹 SELECTED DATE FIX
+================================ */
 .react-calendar__tile--active {
   background: var(--theme-color) !important;
   color: #000 !important;
   font-weight: bold;
-  box-shadow: 0 0 10px var(--theme-color);
+  transform: scale(1.1);
 }
+
+/* ===============================
+   🔹 TODAY DATE
+================================ */
 .react-calendar__tile--now {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--theme-color) !important;
   border: 1px solid var(--theme-color);
 }
+
+/* Weekend */
 .react-calendar__month-view__days__day--weekend {
   color: #ff4d4d !important;
+}
+
+/* Disabled dates */
+.react-calendar__tile:disabled {
+  opacity: 0.35;
+  background: transparent !important;
 }
 
 /* ======================================================
@@ -570,19 +636,15 @@ img {
 .calendar-popup-on-card {
   position: absolute;
   top: 0;
-  
   transform: translate(-50%, -50%);
-  
   width: 100%;
   max-width: 360px;
   max-height: 520px;
-
   padding: 18px;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(12px);
   border-radius: 18px;
   border: 1px solid rgba(0, 234, 255, 0.3);
-
   z-index: 9999999;
   animation: popupSlide 0.25s ease-out;
   overflow-y: auto;
@@ -607,11 +669,11 @@ img {
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  background: var(--theme-color);
+  background:red;
   color: #000;
   font-weight: bold;
   font-size: 18px;
-  box-shadow: 0 0 10px var(--theme-color);
+  box-shadow: red;
 }
 
 /* Form inside popup */
@@ -665,13 +727,10 @@ img {
   .calendar-popup-on-card {
     max-width: 300px;
     padding: 14px;
-    position: absolute;
-    
   }
   .react-calendar {
     padding: 8px !important;
     font-size: 12px !important;
-    
   }
   .react-calendar__tile {
     height: 28px !important;
@@ -699,9 +758,14 @@ img {
 /* ======================================================
    DISABLE OLD MODAL
 ====================================================== */
-.modal-overlay,
-.modal-box {
-  display: none !important;
+.admin-logo-btn {
+  cursor: pointer;
+  pointer-events: auto;
+}
+.admin-logo-btn{
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
 }
 
 

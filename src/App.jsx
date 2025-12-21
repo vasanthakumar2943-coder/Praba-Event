@@ -8,7 +8,7 @@ import About from "./Components/About.jsx";
 import Contact from "./Components/Contact.jsx";
 import Services from "./Components/Services.jsx";
 import Projects from "./Components/Projects.jsx";
-import Events from "./Components/Events.jsx";   
+import Events from "./Components/Events.jsx"; 
 import Admin from "./Components/Admin.jsx";
 import Footer from "./Components/Footer.jsx";
 import BookingHistory from "./Components/BookingHistory.jsx";

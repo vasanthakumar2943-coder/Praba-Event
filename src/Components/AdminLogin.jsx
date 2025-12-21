@@ -19,7 +19,8 @@ function AdminLogin({ onLogin }) {
         const correctPin = adminSnap.data().pin;
 
         if (correctPin === pin) {
-          localStorage.setItem("adminAuth", "true");
+          localStorage.setItem("admin-auth", "true");
+
           toast.success("Login Successful 🎉");
           onLogin();
         } else {
