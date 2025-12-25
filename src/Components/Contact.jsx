@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPhoneAlt, FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
 
 function Contact() {
@@ -7,6 +7,14 @@ function Contact() {
     phone: "",
     message: "",
   });
+
+  // 🔥 Ensure page opens at top (works with global ScrollToTop safely)
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -49,7 +57,7 @@ function Contact() {
           </a>
         </div>
 
-        {/* INSTAGRAM (Updated Box 3) */}
+        {/* INSTAGRAM */}
         <div className="contact-card zoom-in">
           <FaInstagram size={32} color="#E1306C" style={{ marginBottom: "10px" }} />
           <h3>Instagram</h3>
@@ -64,7 +72,7 @@ function Contact() {
           </a>
         </div>
 
-        {/* FACEBOOK (Updated Box 4) */}
+        {/* FACEBOOK */}
         <div className="contact-card zoom-in">
           <FaFacebook size={32} color="#1877F2" style={{ marginBottom: "10px" }} />
           <h3>Facebook</h3>
@@ -105,7 +113,9 @@ function Contact() {
           placeholder="Your Message"
           rows="4"
           value={formData.message}
-          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, message: e.target.value })
+          }
           required
         />
 

@@ -6,40 +6,57 @@ function Services() {
 
   const services = [
     {
-      title: "Wedding Planning",
-      desc: "Beautifully organized weddings with theme décor, stage setup, catering, photography, guest management, and complete event coordination.",
-      icon: "💍",
+      id: 1,
+      title: "Stage Decorations",
+      desc: "Elegant stage decorations with flowers, LED backdrops and theme-based designs for weddings and events.",
+      price: "Starting from ₹12,000",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRut64Uhx-yGfz7UiC9RMzjdJmo5CqLGrZSUg&s",
     },
     {
-      title: "Birthday Decorations",
-      desc: "Creative balloon themes, LED backdrops, customized props, cake table décor, and entertainment arrangements for all ages.",
-      icon: "🎉",
+      id: 2,
+      title: "Teddy Costume",
+      desc: "Cute teddy mascot costume for birthday parties, kids events and surprise celebrations.",
+      price: "Starting from ₹3,500",
+      image:
+        "https://i.pinimg.com/736x/f1/78/11/f1781129d81f070470a4e8715370cbfa.jpg",
     },
     {
-      title: "Corporate Events",
-      desc: "Seminars, branding events, product launches, and official gatherings with professional arrangements and premium setups.",
-      icon: "🏢",
+      id: 3,
+      title: "Lights",
+      desc: "Professional event lighting with LED lights, decorative focus lights and stage illumination.",
+      price: "Starting from ₹6,000",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCGRVy92fqhPHeSo4LkPcWhq_JpEzJzjyi7w&s",
     },
     {
-      title: "Catering Services",
-      desc: "Delicious vegetarian and non-veg menus, live counters, buffet arrangements, and hygienic, premium-quality food service.",
-      icon: "🍽️",
+      id: 4,
+      title: "Popcorn",
+      desc: "Live popcorn stall with machine, fresh popcorn and operator for parties and functions.",
+      price: "Starting from ₹2,500",
+      image:
+        "https://tenthouz.com/wp-content/uploads/2024/07/DALL%C2%B7E-2024-07-21-19.40.16-A-classic-popcorn-machine-cart-set-up-for-a-party.-The-cart-is-bright-red-with-a-traditional-design-featuring-a-glass-enclosure-showcasing-freshly-po.webp",
     },
     {
-      title: "Photography & Videography",
-      desc: "HD photography, cinematic videography, drone shots, candid photos, reels creation, and complete event coverage.",
-      icon: "📸",
+      id: 5,
+      title: "Cotton Candy",
+      desc: "Colorful cotton candy stall with multiple flavors, perfect for kids birthday events.",
+      price: "Starting from ₹2,000",
+      image:
+        "https://www.kinghigher.com/wp-content/uploads/2025/06/cotton-candy-machine-event-pink-model.jpg",
     },
     {
-      title: "Stage & Lighting Setup",
-      desc: "Professional event lighting, truss setup, audio systems, LED panels, themed stage designs, and premium backdrop décor.",
-      icon: "🎭",
+      id: 6,
+      title: "Catering",
+      desc: "Quality catering service with veg and non-veg menus, hygienic food preparation and staff.",
+      price: "Starting from ₹180 per plate",
+      image:
+        "https://tiimg.tistatic.com/fp/1/791/catering-services-737.jpg",
     },
   ];
 
   return (
     <main>
-
       {/* ⭐ SERVICES HEADER */}
       <section
         className="services-hero reveal page-section"
@@ -50,25 +67,31 @@ function Services() {
           Our Services
         </h1>
         <p className="services-subtitle">
-          Premium event solutions crafted to make your celebrations extraordinary.
+          Complete event solutions under one roof
         </p>
       </section>
 
       {/* ⭐ SERVICES GRID */}
       <section className="services-section reveal" aria-label="Service Categories">
         <div className="services-grid">
-          {services.map((service, index) => (
-            <article className="service-card" key={index}>
-              <div className="service-icon" aria-hidden="true">
-                {service.icon}
-              </div>
+          {services.map((service) => (
+            <article className="service-card" key={service.id}>
+              {/* IMAGE */}
+              <img
+                src={service.image}
+                alt={service.title}
+                className="service-img"
+              />
+
               <h3 className="service-title">{service.title}</h3>
+
               <p className="service-desc">{service.desc}</p>
+
+              <p className="service-price">{service.price}</p>
             </article>
           ))}
         </div>
       </section>
-
     </main>
   );
 }

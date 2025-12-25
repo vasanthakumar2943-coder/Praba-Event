@@ -2,21 +2,27 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Footer() {
-  // Scroll page to top on quick link click
-  const scrollTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  // Scroll AFTER navigation (important)
+  const handleLinkClick = () => {
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
   };
 
   // Footer fade-in animation
   useEffect(() => {
     const footer = document.querySelector(".footer-animate");
+    if (!footer) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) footer.classList.add("show");
       },
       { threshold: 0.2 }
     );
+
     observer.observe(footer);
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -32,34 +38,17 @@ function Footer() {
 
           {/* SOCIAL ICONS */}
           <div className="footer-social">
-
-            {/* Instagram */}
-            <a
-              href="https://instagram.com/praba_events_paranji"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://instagram.com/praba_events_paranji" target="_blank" rel="noopener noreferrer">
               <i className="fa-brands fa-instagram"></i>
             </a>
 
-            {/* WhatsApp */}
-            <a
-              href="https://wa.me/917094325920"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://wa.me/917094325920" target="_blank" rel="noopener noreferrer">
               <i className="fa-brands fa-whatsapp"></i>
             </a>
 
-            {/* Facebook */}
-            <a
-              href="https://facebook.com/praba.raman.58"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://facebook.com/praba.raman.58" target="_blank" rel="noopener noreferrer">
               <i className="fa-brands fa-facebook"></i>
             </a>
-
           </div>
         </div>
 
@@ -67,24 +56,23 @@ function Footer() {
         <div>
           <h4>Quick Links</h4>
           <ul className="footer-links">
-            <li><Link to="/" onClick={scrollTop}>Home</Link></li>
-            <li><Link to="/events" onClick={scrollTop}>Events</Link></li>
-            <li><Link to="/services" onClick={scrollTop}>Services</Link></li>
-            <li><Link to="/projects" onClick={scrollTop}>Projects</Link></li>
-            <li><Link to="/contact" onClick={scrollTop}>Contact</Link></li>
+            <li><Link to="/" onClick={handleLinkClick}>Home</Link></li>
+            <li><Link to="/events" onClick={handleLinkClick}>Events</Link></li>
+            <li><Link to="/services" onClick={handleLinkClick}>Services</Link></li>
+            <li><Link to="/projects" onClick={handleLinkClick}>Projects</Link></li>
+            <li><Link to="/contact" onClick={handleLinkClick}>Contact</Link></li>
           </ul>
         </div>
 
         {/* CONTACT INFO */}
         <div>
           <h4>Contact Us</h4>
-
           <p><i className="fa-solid fa-phone"></i> &nbsp; +91 70943 25902</p>
           <p><i className="fa-solid fa-envelope"></i> &nbsp; contact@prabaevents.com</p>
           <p><i className="fa-solid fa-location-dot"></i> &nbsp; Paranji, Arakkonam, Tamil Nadu</p>
         </div>
 
-        {/* SUBSCRIBE SECTION */}
+        {/* SUBSCRIBE */}
         <div>
           <h4>Stay Connected</h4>
           <p>Sign up to receive updates on new events, offers, and exclusive packages.</p>
@@ -95,9 +83,7 @@ function Footer() {
             className="footer-input"
           />
 
-          <button className="btn glow footer-btn">
-            Send
-          </button>
+          <button className="btn glow footer-btn">Send</button>
         </div>
 
       </div>
@@ -106,7 +92,6 @@ function Footer() {
       <div className="footer-bottom">
         © 2025 Praba Event’s. All rights reserved.
       </div>
-
     </footer>
   );
 }

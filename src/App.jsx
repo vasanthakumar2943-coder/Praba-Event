@@ -9,9 +9,11 @@ import Contact from "./Components/Contact.jsx";
 import Services from "./Components/Services.jsx";
 import Projects from "./Components/Projects.jsx";
 import Events from "./Components/Events.jsx"; 
+import Gallery from "./Components/Gallery.jsx"
 import Admin from "./Components/Admin.jsx";
 import Footer from "./Components/Footer.jsx";
 import BookingHistory from "./Components/BookingHistory.jsx";
+import ScrollToTop from "./Components/ScrollToTop";
 
 function ProtectedRoute({ children }) {
   const auth = localStorage.getItem("admin-auth") === "true";
@@ -21,6 +23,7 @@ function ProtectedRoute({ children }) {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Navbar />
       <ToastContainer position="top-right" autoClose={2500} theme="dark" />
 
@@ -28,6 +31,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/gallery" element={<Gallery />} />
         <Route path="/services" element={<Services />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/contact" element={<Contact />} />
